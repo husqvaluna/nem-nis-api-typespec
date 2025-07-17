@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: NEM NIS API Endpoints
-  version: 1.1.9
+  version: '1.22'
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -200,6 +200,21 @@ components:
           description: The transaction hash data as a hexadecimal string.
       description: Represents the hash of a transaction.
 servers:
+  - url: http://ntn2.dusanjp.com:7890
+    description: nis1testnet-2a
+    variables: {}
+  - url: http://ntn1.dusanjp.com:7890
+    description: nis1testnet-1a
+    variables: {}
+  - url: http://tortuga.nemtest.net:7890
+    description: tortuga
+    variables: {}
+  - url: http://ocracoke.nemtest.net:7890
+    description: ocracoke
+    variables: {}
+  - url: http://libertalia.nemtest.net:7890
+    description: libertalia
+    variables: {}
   - url: http://localhost:3000
     description: Local development
     variables: {}
