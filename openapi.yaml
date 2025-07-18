@@ -7,11 +7,433 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   description: OpenAPI Specification of NEM NIS API
 tags:
+  - name: account
   - name: block
   - name: chain
+  - name: debug
+  - name: block-chain
   - name: nis-status
   - name: node
+  - name: namespace
+  - name: transaction
 paths:
+  /account/generate:
+    get:
+      operationId: Account_generateAccount
+      summary: Retrieving account data
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyPairViewModel'
+      tags:
+        - account
+  /account/get:
+    get:
+      operationId: Account_getAccountInfo
+      summary: Requesting the account data
+      parameters:
+        - name: address
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountMetaDataPair'
+      tags:
+        - account
+  /account/get/forwarded:
+    get:
+      operationId: Account_getAccountInfoForwarded
+      summary: Requesting the original account data for a delegate account
+      parameters:
+        - name: address
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountMetaDataPair'
+      tags:
+        - account
+  /account/get/forwarded/from-public-key:
+    get:
+      operationId: Account_getAccountInfoForwardedFromPublicKey
+      summary: Requesting the original account data for a delegate account (Public key)
+      parameters:
+        - name: publicKey
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountMetaDataPair'
+      tags:
+        - account
+  /account/get/from-public-key:
+    get:
+      operationId: Account_getAccountInfoFromPublicKey
+      summary: Requesting the account data (public key)
+      parameters:
+        - name: publicKey
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountMetaDataPair'
+      tags:
+        - account
+  /account/harvests:
+    get:
+      operationId: Account_getAccountHarvests
+      summary: Requesting harvest info data for an account
+      parameters:
+        - name: address
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: hash
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionMetaDataPair'
+      tags:
+        - account
+  /account/historical/get:
+    get:
+      operationId: Account_getAccountHistoricalData
+      summary: Retrieving historical account data
+      description: ''
+      parameters:
+        - name: address
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: startHeight
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: endHeight
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: increment
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountHistoricalDataViewModel'
+      tags:
+        - account
+  /account/importances:
+    get:
+      operationId: Account_getAccountImportances
+      summary: Retrieving account importances for accounts
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountImportanceViewModel'
+      tags:
+        - account
+  /account/lock:
+    post:
+      operationId: Account_lockAccount
+      summary: Locking the account (stops harvesting)
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NemRequestResult'
+      tags:
+        - account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                privateKey:
+                  type: object
+  /account/mosaic/definition/page:
+    get:
+      operationId: Account_getAccountMosaicDefinitions
+      summary: Retrieving mosaic definitions that an account has created
+      parameters:
+        - name: address
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: parent
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MosaicDefinitionMetaDataPair'
+      tags:
+        - account
+  /account/mosaic/owned:
+    get:
+      operationId: Account_getAccountOwnedMosaics
+      summary: Retrieving mosaics that an account owns
+      parameters:
+        - name: address
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Mosaic'
+      tags:
+        - account
+  /account/namespace/page:
+    get:
+      operationId: Account_getAccountNamespaces
+      summary: Retrieving namespaces that an account owns
+      parameters:
+        - name: address
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: parent
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NamespaceMetaDataPair'
+      tags:
+        - account
+  /account/status:
+    get:
+      operationId: Account_getAccountStatus
+      summary: Requesting the account status
+      parameters:
+        - name: address
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountMetaData'
+      tags:
+        - account
+  /account/transfers/all:
+    get:
+      operationId: Account_getAccountAllTransfers
+      summary: Requesting transaction data for an account (All)
+      parameters:
+        - name: address
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: hash
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionMetaDataPair'
+      tags:
+        - account
+  /account/transfers/incoming:
+    get:
+      operationId: Account_getAccountIncomingTransfers
+      summary: Requesting transaction data for an account (Incoming)
+      parameters:
+        - name: address
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: hash
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionMetaDataPair'
+      tags:
+        - account
+  /account/transfers/outgoing:
+    get:
+      operationId: Account_getAccountOutgoingTransfers
+      summary: Requesting transaction data for an account (Outgoing)
+      parameters:
+        - name: address
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: hash
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+      tags:
+        - account
+  /account/unconfirmedTransactions:
+    get:
+      operationId: Account_getAccountUnconfirmedTransactions
+      summary: Unconfirmed transactions
+      parameters:
+        - name: address
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UnconfirmedTransactionMetaDataPair'
+      tags:
+        - account
+  /account/unlock:
+    post:
+      operationId: Account_unlockAccount
+      summary: Unlocking the account (enables harvesting)
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NemRequestResult'
+      tags:
+        - account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                privateKey:
+                  type: object
+  /account/unlocked/info:
+    post:
+      operationId: Account_getAccountUnlockInfo
+      summary: Retrieving the unlock info
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NemRequestResult'
+      tags:
+        - account
   /block/at/public:
     post:
       operationId: Block_getBlockAtHeight
@@ -96,6 +518,170 @@ paths:
                 $ref: '#/components/schemas/BlockChainScore'
       tags:
         - chain
+  /debug/connections/incoming:
+    get:
+      operationId: Debug_getDebugIncomingConnections
+      summary: Monitoring incoming calls
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditCollection'
+      tags:
+        - debug
+  /debug/connections/outgoing:
+    get:
+      operationId: Debug_getDebugOutgoingConnections
+      summary: Monitoring outgoing calls
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditCollection'
+      tags:
+        - debug
+  /debug/local/account/transfers/all:
+    post:
+      operationId: Local_getDecodedAllTransfers
+      summary: All transactions with decoded messages
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionMetaDataPair'
+      tags:
+        - debug
+        - account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: object
+  /debug/local/account/transfers/incoming:
+    post:
+      operationId: Local_getDecodedIncomingTransfers
+      summary: Incoming transactions with decoded messages
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionMetaDataPair'
+      tags:
+        - debug
+        - account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: object
+  /debug/local/account/transfers/outgoing:
+    post:
+      operationId: Local_getDecodedOutgoingTransfers
+      summary: Outgoing transactions with decoded messages
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionMetaDataPair'
+      tags:
+        - debug
+        - account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: object
+  /debug/local/chain/blocks-after:
+    post:
+      operationId: Local_getBlocksAfterHeight
+      summary: Getting part of a chain
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExplorerBlockViewModel'
+      tags:
+        - debug
+        - block-chain
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                blockHeight:
+                  type: object
+  /debug/time-synchronization:
+    get:
+      operationId: Debug_getDebugTimeSynchronization
+      summary: Monitoring the network time
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimeSynchronizationResult'
+      tags:
+        - debug
+  /debug/timers:
+    get:
+      operationId: Debug_getDebugTimers
+      summary: Monitoring timers
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NemAsyncTimerVisitor'
+      tags:
+        - debug
   /heartbeat:
     get:
       operationId: Status_getHeartbeat
@@ -111,6 +697,72 @@ paths:
                 $ref: '#/components/schemas/NemRequestResult'
       tags:
         - nis-status
+  /namespace/:
+    get:
+      operationId: Namespace_getNamespace
+      summary: Retrieving a specific namespace
+      parameters:
+        - name: namespace
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NamespaceDTO'
+      tags:
+        - namespace
+  /namespace/namespace/mosaic/definition/page:
+    get:
+      operationId: Namespace_getNamespaceMosaicDefinitions
+      summary: Retrieving mosaic definitions
+      parameters:
+        - name: namespace
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MosaicDefinitionMetaDataPair'
+      tags:
+        - namespace
+  /namespace/roots:
+    get:
+      operationId: Namespace_getNamespaceRoots
+      summary: Retrieving root namespaces
+      parameters:
+        - name: id
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NamespaceMetaDataPair'
+      tags:
+        - namespace
   /node/active-peers/max-chain-height:
     get:
       operationId: Node_getActivePeersMaxChainHeight
@@ -225,8 +877,220 @@ paths:
                 $ref: '#/components/schemas/NemRequestResult'
       tags:
         - nis-status
+  /transaction/transaction/announce:
+    post:
+      operationId: Transaction_announceTransaction
+      summary: Sending the data to NIS
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NemAnnounceResult'
+      tags:
+        - transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requestAnnounce:
+                  type: object
+  /transaction/transaction/prepare-announce:
+    post:
+      operationId: Transaction_prepareTransactionAnnounce
+      summary: Initiating a transaction
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NemAnnounceResult'
+      tags:
+        - transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                requestPrepareAnnounce:
+                  type: object
 components:
   schemas:
+    AccountHistoricalDataViewModel:
+      type: object
+      required:
+        - height
+        - address
+        - balance
+        - vestedBalance
+        - unvestedBalance
+        - importance
+        - pageRank
+      properties:
+        height:
+          type: integer
+          format: int64
+          minimum: 1
+          description: The height for which the data is valid.
+        address:
+          allOf:
+            - $ref: '#/components/schemas/Address'
+          description: The address of the account.
+        balance:
+          type: integer
+          format: int64
+          description: The balance of the account in micro NEM.
+        vestedBalance:
+          type: integer
+          format: int64
+          description: The vested part of the balance in micro NEM.
+        unvestedBalance:
+          type: integer
+          format: int64
+          description: The unvested part of the balance in micro NEM.
+        importance:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: The importance of the account (decimal number between 0 and 1).
+        pageRank:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: The page rank part of the importance (decimal number between 0 and 1).
+      description: Represents historical account data at a specific height.
+    AccountImportance:
+      type: object
+      required:
+        - isSet
+      properties:
+        isSet:
+          type: number
+          enum:
+            - 0
+            - 1
+          description: Indicates if the score, ev, and height fields are available (0 or 1).
+        score:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: The importance of the account (decimal number between 0 and 1). Available if isSet is 1.
+        ev:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: The page rank portion of the importance (decimal number between 0 and 1). Available if isSet is 1.
+        height:
+          type: integer
+          format: int64
+          minimum: 1
+          description: The height at which the importance calculation was performed. Available if isSet is 1.
+      description: Represents the importance details of an account.
+    AccountImportanceViewModel:
+      type: object
+      required:
+        - address
+        - importance
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+        importance:
+          allOf:
+            - $ref: '#/components/schemas/AccountImportance'
+          description: Substructure that describes the importance of the account.
+      description: Represents an account's importance information.
+    AccountInfo:
+      type: object
+      required:
+        - address
+        - balance
+        - vestedBalance
+        - importance
+        - harvestedBlocks
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+        publicKey:
+          type: string
+          allOf:
+            - $ref: '#/components/schemas/PublicKey'
+          nullable: true
+          description: The public key of the account (hexadecimal string, 64 characters). Null if the account has not published any transaction.
+        balance:
+          type: integer
+          format: int64
+          description: The account balance in micro NEM (integer).
+        vestedBalance:
+          type: integer
+          format: int64
+          description: The vested part of the balance in micro NEM (integer).
+        importance:
+          type: number
+          format: double
+          minimum: 0
+          maximum: 1
+          description: The importance score for the account (decimal number between 0 and 1).
+        harvestedBlocks:
+          type: integer
+          format: int32
+          minimum: 0
+          description: The number of blocks harvested by the account (integer, non-negative).
+        label:
+          type: string
+          nullable: true
+          description: Account label (currently unused, always null in spec).
+      description: Account information structure.
+    AccountMetaData:
+      type: object
+      required:
+        - status
+        - remoteStatus
+        - cosignatoryOf
+      properties:
+        status:
+          type: string
+          description: The harvesting status of the account.
+        remoteStatus:
+          type: string
+          description: The status of remote harvesting.
+        cosignatoryOf:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountInfo'
+          description: Array of AccountInfo structures that describe the multisig accounts that this account is cosignatory of.
+      description: Represents the meta data of an account, including harvesting status and multisig information.
+    AccountMetaDataPair:
+      type: object
+      required:
+        - account
+        - meta
+      properties:
+        account:
+          allOf:
+            - $ref: '#/components/schemas/AccountInfo'
+          description: Contains the account object.
+        meta:
+          allOf:
+            - $ref: '#/components/schemas/AccountMetaData'
+          description: Contains the account meta data object.
+      description: Represents a pair of account information and its meta data.
+    Address:
+      type: string
+      pattern: ^[T|N][A-Z0-9]{39}$
+      description: The account address. Base32 encoded, 40 characters. Starts with 'T' (testnet) or 'N' (mainnet).
     ApplicationMetaData:
       type: object
       properties:
@@ -243,6 +1107,126 @@ components:
           type: string
           description: The current time of the NIS application.
       description: Represents application meta data (e.g., NIS version).
+    AuditCollection:
+      type: object
+      required:
+        - outstanding
+        - most-recent
+      properties:
+        outstanding:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditInfo'
+          description: Array containing information about outstanding (not yet processed) requests.
+        most-recent:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditInfo'
+          description: Array containing information about the most recent requests.
+      description: Represents a collection of audited requests for debug purposes.
+    AuditInfo:
+      type: object
+      required:
+        - path
+        - startTime
+        - host
+        - elapsedTime
+        - id
+      properties:
+        path:
+          type: string
+          description: The relative URL path of the request.
+        startTime:
+          type: integer
+          format: int32
+          description: The number of seconds elapsed since the creation of the nemesis block when the request was received.
+        host:
+          type: string
+          description: The host which initiated the request.
+        elapsedTime:
+          type: integer
+          format: int32
+          description: The time in seconds that has elapsed since the request was received.
+        id:
+          type: integer
+          format: int32
+          description: The unique id of the request.
+      description: Represents information about an audited request.
+    Block:
+      type: object
+      required:
+        - timeStamp
+        - signature
+        - prevBlockHash
+        - transactions
+        - version
+        - hash
+        - height
+        - difficulty
+        - totalFee
+        - type
+        - generatorPublicKey
+        - blockReward
+      properties:
+        timeStamp:
+          type: integer
+          format: int32
+          description: Number of seconds elapsed since the creation of the nemesis block when the block was created.
+        signature:
+          type: string
+          pattern: ^[a-f0-9]{128}$
+          description: The signature of the block (hexadecimal string, 128 chars).
+        prevBlockHash:
+          allOf:
+            - $ref: '#/components/schemas/TransactionHash'
+          description: The hash of the previous block.
+        transactions:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/TransferTransaction'
+              - $ref: '#/components/schemas/ImportanceTransferTransaction'
+              - $ref: '#/components/schemas/MultisigAggregateModificationTransaction'
+              - $ref: '#/components/schemas/MultisigSignatureTransaction'
+              - {}
+          description: The array of transactions included in the block.
+        version:
+          type: integer
+          format: int32
+          description: The version of the block structure.
+        hash:
+          allOf:
+            - $ref: '#/components/schemas/TransactionHash'
+          description: The hash of the block.
+        height:
+          type: integer
+          format: int64
+          minimum: 1
+          description: The height of the block.
+        difficulty:
+          type: integer
+          format: int64
+          description: The block difficulty.
+        totalFee:
+          type: integer
+          format: int64
+          description: The total fee collected by harvesting the block in micro NEM.
+        type:
+          type: integer
+          format: int32
+          description: The type of the block (usually 1 for a normal block).
+        payload:
+          type: string
+          description: The payload of the block (usually empty).
+        generatorPublicKey:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+          description: The public key of the account that generated (harvested) the block (hexadecimal string, 64 chars).
+        blockReward:
+          type: integer
+          format: int64
+          description: The block reward in micro NEM.
+      description: Represents a block in the NEM blockchain.
     BlockChainScore:
       type: object
       required:
@@ -263,6 +1247,55 @@ components:
           minimum: 1
           description: The height of the block.
       description: Represents the height of a block in the blockchain.
+    ExplorerBlockViewModel:
+      type: object
+      required:
+        - txes
+        - block
+        - hash
+        - difficulty
+      properties:
+        txes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExplorerTransferViewModel'
+          description: Array containing the transactions of the block.
+        block:
+          allOf:
+            - $ref: '#/components/schemas/Block'
+          description: The block object.
+        hash:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+          description: The hash of the block (hexadecimal string, 64 chars).
+        difficulty:
+          type: integer
+          format: int64
+          description: The difficulty of the block.
+      description: Represents a block view model used by the blockchain explorer.
+    ExplorerTransferViewModel:
+      type: object
+      required:
+        - tx
+        - hash
+      properties:
+        tx:
+          anyOf:
+            - $ref: '#/components/schemas/TransferTransaction'
+            - $ref: '#/components/schemas/ImportanceTransferTransaction'
+            - $ref: '#/components/schemas/MultisigAggregateModificationTransaction'
+            - $ref: '#/components/schemas/MultisigSignatureTransaction'
+            - {}
+          description: The transaction object. The specific type depends on the transaction type field within.
+        hash:
+          allOf:
+            - $ref: '#/components/schemas/TransactionHash'
+          description: The hash of the transaction.
+        innerHash:
+          allOf:
+            - $ref: '#/components/schemas/TransactionHash'
+          description: The hash of the inner transaction. Only available for multisig transactions.
+      description: Represents a transaction view model used by the blockchain explorer.
     ExtendedNodeExperiencePair:
       type: object
       required:
@@ -283,6 +1316,344 @@ components:
             - $ref: '#/components/schemas/NodeExperience'
           description: The communication experience with the remote node.
       description: Represents a pair of a node and its communication experience.
+    ImportanceTransferTransaction:
+      type: object
+      required:
+        - type
+        - mode
+        - remoteAccount
+      properties:
+        type:
+          type: number
+          enum:
+            - 2049
+          description: Transaction type must be 0x801 (2049).
+        mode:
+          type: number
+          enum:
+            - 1
+            - 2
+          description: 'The mode of the importance transfer (1: Activate, 2: Deactivate).'
+        remoteAccount:
+          allOf:
+            - $ref: '#/components/schemas/PublicKey'
+          description: The public key of the remote account (hexadecimal string, 64 chars).
+      allOf:
+        - $ref: '#/components/schemas/TransactionBase'
+      description: |-
+        Represents an importance transfer transaction.
+        Type code: 0x801 (2049)
+    KeyPairViewModel:
+      type: object
+      required:
+        - privateKey
+        - publicKey
+        - address
+      properties:
+        privateKey:
+          allOf:
+            - $ref: '#/components/schemas/PrivateKey'
+          description: The private key of the account as hexadecimal string (64 chars).
+        publicKey:
+          allOf:
+            - $ref: '#/components/schemas/PublicKey'
+          description: The public key of the account as hexadecimal string (64 chars).
+        address:
+          allOf:
+            - $ref: '#/components/schemas/Address'
+          description: The address of the account.
+      description: Contains information about a new account's key pair and address.
+    MessagePayload:
+      type: object
+      required:
+        - type
+        - payload
+      properties:
+        type:
+          type: number
+          enum:
+            - 1
+            - 2
+          description: 'Message type (1: unencrypted, 2: encrypted).'
+        payload:
+          type: string
+          maxLength: 2048
+          format: hex
+          description: The message content (hexadecimal string). Max 1024 bytes (2048 hex chars).
+      description: Represents the message payload within a transaction.
+    Mosaic:
+      type: object
+      required:
+        - mosaicId
+        - quantity
+      properties:
+        mosaicId:
+          allOf:
+            - $ref: '#/components/schemas/MosaicId'
+          description: The mosaic id.
+        quantity:
+          type: integer
+          format: int64
+          description: The mosaic quantity in smallest units.
+      description: Represents an instance of a mosaic.
+    MosaicDefinition:
+      type: object
+      required:
+        - creator
+        - description
+        - id
+        - properties
+      properties:
+        creator:
+          allOf:
+            - $ref: '#/components/schemas/PublicKey'
+          description: The public key of the mosaic definition creator (hexadecimal string, 64 chars).
+        description:
+          type: string
+          description: The description of the mosaic.
+        id:
+          allOf:
+            - $ref: '#/components/schemas/MosaicId'
+          description: The identifier of the mosaic.
+        properties:
+          type: array
+          items:
+            $ref: '#/components/schemas/MosaicProperty'
+          description: Array of mosaic properties.
+        levy:
+          allOf:
+            - $ref: '#/components/schemas/MosaicLevy'
+          description: The optional levy for the mosaic.
+      description: Represents a mosaic definition.
+    MosaicDefinitionMetaData:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: The id for the mosaic definition object.
+      description: Represents meta data for a mosaic definition.
+    MosaicDefinitionMetaDataPair:
+      type: object
+      required:
+        - meta
+        - mosaic
+      properties:
+        meta:
+          allOf:
+            - $ref: '#/components/schemas/MosaicDefinitionMetaData'
+          description: Contains the mosaic definition meta data object.
+        mosaic:
+          allOf:
+            - $ref: '#/components/schemas/MosaicDefinition'
+          description: Contains the mosaic definition object.
+      description: Represents a pair of mosaic definition and its meta data.
+    MosaicId:
+      type: object
+      required:
+        - namespaceId
+        - name
+      properties:
+        namespaceId:
+          type: string
+          description: The namespace id of the mosaic.
+        name:
+          type: string
+          description: The name of the mosaic within the namespace.
+      description: Represents a mosaic identifier.
+    MosaicLevy:
+      type: object
+      required:
+        - type
+        - recipient
+        - mosaicId
+        - fee
+      properties:
+        type:
+          type: number
+          enum:
+            - 1
+            - 2
+          description: 'The levy type (1: absolute fee, 2: percentile fee).'
+        recipient:
+          allOf:
+            - $ref: '#/components/schemas/Address'
+          description: The recipient account address of the levy.
+        mosaicId:
+          allOf:
+            - $ref: '#/components/schemas/MosaicId'
+          description: The mosaic in which the levy is paid.
+        fee:
+          type: integer
+          format: int64
+          description: The fee quantity. Interpretation depends on the levy type.
+      description: Represents a mosaic levy (additional fee on transfer).
+    MosaicProperty:
+      type: object
+      required:
+        - name
+        - value
+      properties:
+        name:
+          type: string
+          description: The name of the property (e.g., "divisibility", "initialSupply", "supplyMutable", "transferable").
+        value:
+          type: string
+          description: The value of the property.
+      description: Represents a mosaic property.
+    MultisigAggregateModificationTransaction:
+      type: object
+      required:
+        - type
+        - modifications
+      properties:
+        type:
+          type: number
+          enum:
+            - 4097
+          description: Transaction type must be 0x1001 (4097).
+        modifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/MultisigCosignatoryModification'
+          description: Array of multisig cosignatory modifications.
+        minCosignatories:
+          allOf:
+            - $ref: '#/components/schemas/MultisigMinimumCosignatoriesModification'
+          description: JSON object that holds the minimum cosignatories modification.
+      allOf:
+        - $ref: '#/components/schemas/TransactionBase'
+      description: |-
+        Represents a multisig aggregate modification transaction.
+        Type code: 0x1001 (4097)
+    MultisigCosignatoryModification:
+      type: object
+      required:
+        - modificationType
+        - cosignatoryAccount
+      properties:
+        modificationType:
+          type: number
+          enum:
+            - 1
+            - 2
+          description: 'The type of modification (1: Add, 2: Delete).'
+        cosignatoryAccount:
+          allOf:
+            - $ref: '#/components/schemas/PublicKey'
+          description: The public key of the cosignatory account (hexadecimal string, 64 chars).
+      description: Represents a modification to a multisig account's cosignatories.
+    MultisigMinimumCosignatoriesModification:
+      type: object
+      required:
+        - relativeChange
+      properties:
+        relativeChange:
+          type: integer
+          format: int32
+          description: Value indicating the relative change of the minimum cosignatories.
+      description: Represents a modification to the minimum number of cosignatories required for a multisig account.
+    MultisigSignatureTransaction:
+      type: object
+      required:
+        - type
+        - otherHash
+        - otherAccount
+      properties:
+        type:
+          type: number
+          enum:
+            - 4098
+          description: Transaction type must be 0x1002 (4098).
+        otherHash:
+          allOf:
+            - $ref: '#/components/schemas/TransactionHash'
+          description: The hash of the inner transaction of the corresponding multisig transaction.
+        otherAccount:
+          allOf:
+            - $ref: '#/components/schemas/Address'
+          description: The address of the corresponding multisig account.
+      allOf:
+        - $ref: '#/components/schemas/TransactionBase'
+      description: |-
+        Represents a multisig signature transaction.
+        Type code: 0x1002 (4098)
+    MultisigTransaction:
+      type: object
+      required:
+        - type
+        - otherTrans
+        - signatures
+      properties:
+        type:
+          type: number
+          enum:
+            - 4099
+          description: Transaction type must be 0x1003 (4099).
+        otherTrans:
+          anyOf:
+            - $ref: '#/components/schemas/TransferTransaction'
+            - $ref: '#/components/schemas/ImportanceTransferTransaction'
+            - $ref: '#/components/schemas/MultisigAggregateModificationTransaction'
+            - {}
+          description: The inner transaction. Can be a TransferTransaction, ImportanceTransferTransaction, or MultisigAggregateModificationTransaction. The inner transaction does not have a valid signature.
+        signatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/MultisigSignatureTransaction'
+          description: The JSON array of MultisigSignatureTransaction objects.
+      allOf:
+        - $ref: '#/components/schemas/TransactionBase'
+      description: |-
+        Represents a multisig transaction.
+        Type code: 0x1003 (4099)
+    NamespaceDTO:
+      type: object
+      required:
+        - fqn
+        - owner
+        - height
+      properties:
+        fqn:
+          type: string
+          description: The fully qualified name of the namespace (namespace id).
+        owner:
+          allOf:
+            - $ref: '#/components/schemas/Address'
+          description: The owner account address of the namespace.
+        height:
+          type: integer
+          format: int64
+          minimum: 1
+          description: The height at which the ownership begins.
+      description: Represents a NEM namespace.
+    NamespaceMetaData:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: The database id for the namespace object.
+      description: Represents meta data for a namespace.
+    NamespaceMetaDataPair:
+      type: object
+      required:
+        - meta
+        - namespaceInfo
+      properties:
+        meta:
+          allOf:
+            - $ref: '#/components/schemas/NamespaceMetaData'
+          description: Contains the namespace meta data object.
+        namespaceInfo:
+          allOf:
+            - $ref: '#/components/schemas/NamespaceDTO'
+          description: Contains the namespace object.
+      description: Represents a pair of namespace and its meta data.
     NemAnnounceResult:
       type: object
       required:
@@ -303,6 +1674,54 @@ components:
       description: |-
         Represents the result of announcing a transaction.
         Extends NemRequestResult with transaction hash information.
+    NemAsyncTimerVisitor:
+      type: object
+      required:
+        - last-delay-time
+        - executions
+        - failures
+        - successes
+        - last-operation-start-time
+        - is-executing
+        - name
+        - average-operation-time
+        - last-operation-time
+      properties:
+        last-delay-time:
+          type: integer
+          format: int64
+          description: The number of milliseconds since the last execution of the timer.
+        executions:
+          type: integer
+          format: int32
+          description: The number of times the task was executed.
+        failures:
+          type: integer
+          format: int32
+          description: The number times the task failed.
+        successes:
+          type: integer
+          format: int32
+          description: The number times the task was successful.
+        last-operation-start-time:
+          type: integer
+          format: int64
+          description: The time at which the task started last time (seconds elapsed since nemesis block).
+        is-executing:
+          type: boolean
+          description: True if the task is executing, false otherwise.
+        name:
+          type: string
+          description: The name of the task.
+        average-operation-time:
+          type: number
+          format: double
+          description: The number of seconds the task needed on average.
+        last-operation-time:
+          type: number
+          format: double
+          description: The number of seconds the task needed the last time.
+      description: Contains information about a periodic task timer for monitoring.
     NemRequestResult:
       type: object
       required:
@@ -466,11 +1885,109 @@ components:
           type: string
           description: The underlying platform (OS, java version).
       description: Represents meta data for a node.
+    PrivateKey:
+      type: string
+      maxLength: 64
+      format: hex
+      description: The private key as hexadecimal string (64 chars).
+    ProvisionNamespaceTransaction:
+      type: object
+      required:
+        - type
+        - rentalFeeSink
+        - rentalFee
+        - newPart
+      properties:
+        type:
+          type: number
+          enum:
+            - 8193
+          description: Transaction type must be 0x2001 (8193).
+        rentalFeeSink:
+          allOf:
+            - $ref: '#/components/schemas/PublicKey'
+          description: The public key of the account to which the rental fee is transferred (hexadecimal string, 64 chars).
+        rentalFee:
+          type: integer
+          format: int64
+          description: The fee for renting the namespace in micro NEM.
+        newPart:
+          type: string
+          description: The new part which is concatenated to the parent with a '.' as separator.
+        parent:
+          type: string
+          nullable: true
+          description: The parent namespace. This can be null if the transaction rents a root namespace.
+      allOf:
+        - $ref: '#/components/schemas/TransactionBase'
+      description: |-
+        Represents a provision namespace transaction.
+        Type code: 0x2001 (8193)
     PublicKey:
       type: string
       maxLength: 64
       format: hex
       description: Public key.
+    TimeSynchronizationResult:
+      type: object
+      required:
+        - dateTime
+        - currentTimeOffset
+        - change
+      properties:
+        dateTime:
+          type: string
+          description: The date and time when the synchronization was performed (string format).
+        currentTimeOffset:
+          type: integer
+          format: int64
+          description: The current offset to the local computer clock in milliseconds.
+        change:
+          type: integer
+          format: int32
+          description: The change in milliseconds compared to the last synchronization.
+      description: Represents the result of a network time synchronization.
+    TransactionBase:
+      type: object
+      required:
+        - timeStamp
+        - fee
+        - type
+        - deadline
+        - version
+        - signer
+      properties:
+        timeStamp:
+          type: integer
+          format: int32
+          description: Number of seconds elapsed since the creation of the nemesis block.
+        signature:
+          type: string
+          pattern: ^[a-f0-9]{128}$
+          format: hex
+          description: Transaction signature (hexadecimal string, 128 chars). Missing if part of a multisig transaction.
+        fee:
+          type: integer
+          format: int64
+          description: Transaction fee in micro NEM.
+        type:
+          type: integer
+          format: int32
+          description: Transaction type code (integer).
+        deadline:
+          type: integer
+          format: int32
+          description: Deadline in seconds elapsed since the creation of the nemesis block.
+        version:
+          type: integer
+          format: int32
+          description: 'Transaction structure version. Network dependent (e.g., mainnet: 0x68000001, testnet: 0x98000001).'
+        signer:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+          format: hex
+          description: Public key of the account that created the transaction (hexadecimal string, 64 chars).
+      description: Base model for all transaction types.
     TransactionHash:
       type: object
       required:
@@ -481,6 +1998,146 @@ components:
           format: hex
           description: The transaction hash data as a hexadecimal string.
       description: Represents the hash of a transaction.
+    TransactionMetaData:
+      type: object
+      required:
+        - height
+        - id
+        - hash
+      properties:
+        height:
+          type: integer
+          format: int64
+          minimum: 1
+          description: The height of the block in which the transaction was included.
+        id:
+          type: integer
+          format: int32
+          description: The database id of the transaction.
+        hash:
+          allOf:
+            - $ref: '#/components/schemas/TransactionHash'
+          description: The hash of the transaction.
+      description: Transaction meta data structure.
+    TransactionMetaDataPair:
+      type: object
+      required:
+        - meta
+        - transaction
+      properties:
+        meta:
+          allOf:
+            - $ref: '#/components/schemas/TransactionMetaData'
+          description: The meta data of the transaction.
+        transaction:
+          anyOf:
+            - $ref: '#/components/schemas/TransferTransaction'
+            - $ref: '#/components/schemas/ImportanceTransferTransaction'
+            - $ref: '#/components/schemas/MultisigAggregateModificationTransaction'
+            - $ref: '#/components/schemas/MultisigSignatureTransaction'
+            - $ref: '#/components/schemas/MultisigTransaction'
+            - {}
+          description: The actual transaction object. The specific type depends on the transaction type field within.
+      description: Structure containing transaction data and its meta data.
+    TransferTransaction:
+      anyOf:
+        - $ref: '#/components/schemas/TransferTransactionV1'
+        - $ref: '#/components/schemas/TransferTransactionV2'
+      description: Union type representing either V1 or V2 Transfer Transaction.
+    TransferTransactionV1:
+      type: object
+      required:
+        - type
+        - recipient
+        - amount
+      properties:
+        type:
+          type: number
+          enum:
+            - 257
+          description: Transaction type must be 0x101 (257).
+        recipient:
+          allOf:
+            - $ref: '#/components/schemas/Address'
+          description: Recipient account address.
+        amount:
+          type: integer
+          format: int64
+          description: Amount transferred in micro NEM.
+        message:
+          allOf:
+            - $ref: '#/components/schemas/MessagePayload'
+          description: Optional message payload.
+      allOf:
+        - $ref: '#/components/schemas/TransactionBase'
+      description: |-
+        Represents a version 1 transfer transaction (XEM transfer).
+        Type code: 0x101 (257)
+    TransferTransactionV2:
+      type: object
+      required:
+        - type
+        - recipient
+        - mosaics
+      properties:
+        type:
+          type: number
+          enum:
+            - 257
+          description: Transaction type must be 0x101 (257).
+        recipient:
+          allOf:
+            - $ref: '#/components/schemas/Address'
+          description: Recipient account address.
+        message:
+          allOf:
+            - $ref: '#/components/schemas/MessagePayload'
+          description: Optional message payload.
+        mosaics:
+          type: array
+          items:
+            $ref: '#/components/schemas/Mosaic'
+          description: Array of mosaics being transferred.
+      allOf:
+        - $ref: '#/components/schemas/TransactionBase'
+      description: |-
+        Represents a version 2 transfer transaction (Mosaic transfer).
+        Type code: 0x101 (257)
+    UnconfirmedTransactionMetaData:
+      type: object
+      required:
+        - id
+        - hash
+      properties:
+        id:
+          type: integer
+          format: int32
+          description: The database id of the transaction.
+        hash:
+          allOf:
+            - $ref: '#/components/schemas/TransactionHash'
+          description: The hash of the transaction.
+      description: Represents meta data for an unconfirmed transaction.
+    UnconfirmedTransactionMetaDataPair:
+      type: object
+      required:
+        - meta
+        - transaction
+      properties:
+        meta:
+          allOf:
+            - $ref: '#/components/schemas/UnconfirmedTransactionMetaData'
+          description: Contains the unconfirmed transaction meta data object.
+        transaction:
+          anyOf:
+            - $ref: '#/components/schemas/TransferTransaction'
+            - $ref: '#/components/schemas/ImportanceTransferTransaction'
+            - $ref: '#/components/schemas/MultisigAggregateModificationTransaction'
+            - $ref: '#/components/schemas/MultisigSignatureTransaction'
+            - $ref: '#/components/schemas/MultisigTransaction'
+            - {}
+          description: Contains the transaction object. The specific type depends on the transaction type field within.
+      description: Represents a pair of unconfirmed transaction and its meta data.
 servers:
   - url: http://ntn2.dusanjp.com:7890
     description: nis1testnet-2a
