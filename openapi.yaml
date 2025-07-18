@@ -10,6 +10,7 @@ tags:
   - name: block
   - name: chain
   - name: nis-status
+  - name: node
 paths:
   /block/at/public:
     post:
@@ -110,6 +111,105 @@ paths:
                 $ref: '#/components/schemas/NemRequestResult'
       tags:
         - nis-status
+  /node/active-peers/max-chain-height:
+    get:
+      operationId: Node_getActivePeersMaxChainHeight
+      summary: Maximum chain height in the active neighborhood
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockHeight'
+      tags:
+        - node
+  /node/experiences:
+    get:
+      operationId: Node_getNodeExperiences
+      summary: Requesting node experiences
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExtendedNodeExperiencePair'
+      tags:
+        - node
+  /node/extended-info:
+    get:
+      operationId: Node_getNodeExtendedInfo
+      summary: Extended node information
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NisNodeInfo'
+      tags:
+        - node
+  /node/info:
+    get:
+      operationId: Node_getNodeInfo
+      summary: Basic node information
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema: {}
+      tags:
+        - node
+  /node/peer-list/active:
+    get:
+      operationId: Node_getActiveNodePeers
+      summary: Active neighborhood
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeCollection'
+      tags:
+        - node
+  /node/peer-list/all:
+    get:
+      operationId: Node_getAllNodePeers
+      summary: Complete neighborhood
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeCollection'
+      tags:
+        - node
+  /node/peer-list/reachable:
+    get:
+      operationId: Node_getReachableNodePeers
+      summary: Reachable neighborhood
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeCollection'
+      tags:
+        - node
   /status:
     get:
       operationId: Status_getStatus
@@ -127,6 +227,22 @@ paths:
         - nis-status
 components:
   schemas:
+    ApplicationMetaData:
+      type: object
+      properties:
+        version:
+          type: string
+          description: The version of the NIS application.
+        build:
+          type: string
+          description: The build of the NIS application.
+        startTime:
+          type: string
+          description: The start time of the NIS application.
+        currentTime:
+          type: string
+          description: The current time of the NIS application.
+      description: Represents application meta data (e.g., NIS version).
     BlockChainScore:
       type: object
       required:
@@ -147,6 +263,26 @@ components:
           minimum: 1
           description: The height of the block.
       description: Represents the height of a block in the blockchain.
+    ExtendedNodeExperiencePair:
+      type: object
+      required:
+        - node
+        - syncs
+        - experience
+      properties:
+        node:
+          allOf:
+            - $ref: '#/components/schemas/Node'
+          description: The remote Node object.
+        syncs:
+          type: integer
+          format: int32
+          description: The number of synchronization attempts the node had with the remote node.
+        experience:
+          allOf:
+            - $ref: '#/components/schemas/NodeExperience'
+          description: The communication experience with the remote node.
+      description: Represents a pair of a node and its communication experience.
     NemAnnounceResult:
       type: object
       required:
@@ -189,6 +325,152 @@ components:
           type: string
           description: A human-readable message describing the result.
       description: Represents the result of a NEM request, typically used for validation or status.
+    NisNodeInfo:
+      type: object
+      required:
+        - node
+        - nisInfo
+      properties:
+        node:
+          allOf:
+            - $ref: '#/components/schemas/Node'
+          description: Contains the node object.
+        nisInfo:
+          allOf:
+            - $ref: '#/components/schemas/ApplicationMetaData'
+          description: Contains the application meta data substructure.
+      description: Provides detailed information about a NIS node.
+    Node:
+      type: object
+      required:
+        - metaData
+        - endpoint
+        - identity
+      properties:
+        metaData:
+          allOf:
+            - $ref: '#/components/schemas/NodeMetaData'
+          description: Meta data for the node.
+        endpoint:
+          allOf:
+            - $ref: '#/components/schemas/NodeEndpoint'
+          description: Endpoint information for the node.
+        identity:
+          allOf:
+            - $ref: '#/components/schemas/NodeIdentity'
+          description: Identity information for the node.
+      description: Represents a node in the NEM network.
+    NodeCollection:
+      type: object
+      required:
+        - inactive
+        - active
+        - busy
+        - failure
+      properties:
+        inactive:
+          type: array
+          items:
+            $ref: '#/components/schemas/Node'
+          description: Array of inactive nodes.
+        active:
+          type: array
+          items:
+            $ref: '#/components/schemas/Node'
+          description: Array of active nodes.
+        busy:
+          type: array
+          items:
+            $ref: '#/components/schemas/Node'
+          description: Array of busy nodes.
+        failure:
+          type: array
+          items:
+            $ref: '#/components/schemas/Node'
+          description: Array of failing nodes.
+      description: Holds arrays of nodes with different statuses.
+    NodeEndpoint:
+      type: object
+      required:
+        - protocol
+        - port
+        - host
+      properties:
+        protocol:
+          type: string
+          enum:
+            - http
+            - https
+          description: The protocol used for communication (HTTP or HTTPS).
+        port:
+          type: integer
+          format: int32
+          description: The port used for communication.
+        host:
+          type: string
+          description: The IP address or hostname of the endpoint.
+      description: Represents the endpoint information for a node.
+    NodeExperience:
+      type: object
+      required:
+        - s
+        - f
+      properties:
+        s:
+          type: integer
+          format: int32
+          description: The number of successful communications with the remote node.
+        f:
+          type: integer
+          format: int32
+          description: The number of failed communications with the remote node.
+      description: Represents the communication experience with a remote node.
+    NodeIdentity:
+      type: object
+      required:
+        - name
+        - public-key
+      properties:
+        name:
+          type: string
+          description: The name of the node.
+        public-key:
+          allOf:
+            - $ref: '#/components/schemas/PublicKey'
+          description: The public key used to identify the node (hexadecimal string, 64 chars).
+      description: Represents the identity information for a node.
+    NodeMetaData:
+      type: object
+      required:
+        - features
+        - networkId
+        - application
+        - version
+        - platform
+      properties:
+        features:
+          type: integer
+          format: int32
+          description: The number of features the node has.
+        networkId:
+          type: integer
+          format: int32
+          description: 'The network id (104: mainnet, 96: mijin, 152: testnet).'
+        application:
+          type: string
+          description: The name of the application that is running the node.
+        version:
+          type: string
+          description: The version of the application.
+        platform:
+          type: string
+          description: The underlying platform (OS, java version).
+      description: Represents meta data for a node.
+    PublicKey:
+      type: string
+      maxLength: 64
+      format: hex
+      description: Public key.
     TransactionHash:
       type: object
       required:
