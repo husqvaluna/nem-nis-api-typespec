@@ -97,7 +97,7 @@ paths:
         - chain
   /heartbeat:
     get:
-      operationId: System_getHeartbeat
+      operationId: Status_getHeartbeat
       summary: ''
       description: ''
       parameters: []
@@ -112,7 +112,7 @@ paths:
         - nis-status
   /status:
     get:
-      operationId: System_getStatus
+      operationId: Status_getStatus
       summary: Status
       description: ''
       parameters: []
