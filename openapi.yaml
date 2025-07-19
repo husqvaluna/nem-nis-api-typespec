@@ -739,7 +739,7 @@ paths:
                 $ref: '#/components/schemas/NamespaceDTO'
       tags:
         - namespace
-  /namespace/namespace/mosaic/definition/page:
+  /namespace/mosaic/definition/page:
     get:
       operationId: Namespace_getNamespaceMosaicDefinitions
       summary: Retrieving mosaic definitions
@@ -801,6 +801,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BlockHeight'
+      tags:
+        - node
+  /node/boot:
+    post:
+      operationId: Node_postNodeBoot
+      summary: Booting the local node
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NemRequestResult'
       tags:
         - node
   /node/experiences:
