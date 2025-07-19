@@ -20,7 +20,8 @@ paths:
   /account/generate:
     get:
       operationId: Account_generateAccount
-      summary: Retrieving account data
+      summary: Generating new account data
+      description: Generates a new NEM account, returning its private key, public key, and address.
       parameters: []
       responses:
         '200':
@@ -35,6 +36,7 @@ paths:
     get:
       operationId: Account_getAccountInfo
       summary: Requesting the account data
+      description: Retrieves the account information and its metadata for a given account address.
       parameters:
         - name: address
           in: query
@@ -54,6 +56,7 @@ paths:
     get:
       operationId: Account_getAccountInfoForwarded
       summary: Requesting the original account data for a delegate account
+      description: Retrieves the original account data for a delegate account, which is an account that has delegated its importance to another account.
       parameters:
         - name: address
           in: query
@@ -72,7 +75,8 @@ paths:
   /account/get/forwarded/from-public-key:
     get:
       operationId: Account_getAccountInfoForwardedFromPublicKey
-      summary: Requesting the original account data for a delegate account (Public key)
+      summary: Requesting the original account data for a delegate account (public key variant)
+      description: Retrieves the original account data for a delegate account using its public key.
       parameters:
         - name: publicKey
           in: query
@@ -91,7 +95,8 @@ paths:
   /account/get/from-public-key:
     get:
       operationId: Account_getAccountInfoFromPublicKey
-      summary: Requesting the account data (public key)
+      summary: Requesting the account data (public key variant)
+      description: Retrieves the account information and its metadata for a given public key.
       parameters:
         - name: publicKey
           in: query
@@ -111,6 +116,7 @@ paths:
     get:
       operationId: Account_getAccountHarvests
       summary: Requesting harvest info data for an account
+      description: Retrieves harvest information for a given account, including details about blocks harvested.
       parameters:
         - name: address
           in: query
@@ -174,6 +180,7 @@ paths:
     get:
       operationId: Account_getAccountImportances
       summary: Retrieving account importances for accounts
+      description: Retrieves a list of account importances for all accounts or a specific account.
       parameters: []
       responses:
         '200':
@@ -190,7 +197,7 @@ paths:
     post:
       operationId: Account_lockAccount
       summary: Locking the account (stops harvesting)
-      description: ''
+      description: Locks the account, which stops the harvesting process. This operation typically requires the account's private key.
       parameters: []
       responses:
         '200':
@@ -287,6 +294,7 @@ paths:
     get:
       operationId: Account_getAccountStatus
       summary: Requesting the account status
+      description: Retrieves the current status of an account, including its harvesting status and multisig information.
       parameters:
         - name: address
           in: query
@@ -305,7 +313,8 @@ paths:
   /account/transfers/all:
     get:
       operationId: Account_getAccountAllTransfers
-      summary: Requesting transaction data for an account (All)
+      summary: All transactions
+      description: Retrieves a list of all transactions (incoming and outgoing) for a given account address.
       parameters:
         - name: address
           in: query
@@ -331,7 +340,8 @@ paths:
   /account/transfers/incoming:
     get:
       operationId: Account_getAccountIncomingTransfers
-      summary: Requesting transaction data for an account (Incoming)
+      summary: Incoming transactions
+      description: Retrieves a list of incoming transactions for a given account address.
       parameters:
         - name: address
           in: query
@@ -357,7 +367,8 @@ paths:
   /account/transfers/outgoing:
     get:
       operationId: Account_getAccountOutgoingTransfers
-      summary: Requesting transaction data for an account (Outgoing)
+      summary: Outgoing transactions
+      description: Retrieves a list of outgoing transactions for a given account address.
       parameters:
         - name: address
           in: query
@@ -378,6 +389,7 @@ paths:
     get:
       operationId: Account_getAccountUnconfirmedTransactions
       summary: Unconfirmed transactions
+      description: Retrieves a list of unconfirmed transactions for a given account address.
       parameters:
         - name: address
           in: query
@@ -399,7 +411,7 @@ paths:
     post:
       operationId: Account_unlockAccount
       summary: Unlocking the account (enables harvesting)
-      description: ''
+      description: Unlocks the account, enabling the harvesting process. This operation typically requires the account's private key.
       parameters: []
       responses:
         '200':
@@ -423,7 +435,7 @@ paths:
     post:
       operationId: Account_getAccountUnlockInfo
       summary: Retrieving the unlock info
-      description: ''
+      description: Retrieves information about the unlock status of the account, indicating whether it is currently harvesting.
       parameters: []
       responses:
         '200':
@@ -438,7 +450,7 @@ paths:
     post:
       operationId: Block_getBlockAtHeight
       summary: Getting a block with a given height
-      description: ''
+      description: Retrieves a block from the blockchain at a specific height.
       parameters: []
       responses:
         '200':
@@ -461,7 +473,7 @@ paths:
     get:
       operationId: Block_getBlockByHash
       summary: Getting a block with a given hash
-      description: ''
+      description: Retrieves a block from the blockchain using its hash. This operation allows fetching specific block details.
       parameters:
         - name: blockHash
           in: query
@@ -479,8 +491,8 @@ paths:
   /chain/height:
     get:
       operationId: Chain_getChainInfo
-      summary: ''
-      description: ''
+      summary: Block chain height
+      description: Retrieves the current height of the blockchain.
       parameters: []
       responses:
         '200':
@@ -522,6 +534,7 @@ paths:
     get:
       operationId: Debug_getDebugIncomingConnections
       summary: Monitoring incoming calls
+      description: Retrieves information about incoming connections to the NIS node for debugging purposes.
       parameters: []
       responses:
         '200':
@@ -536,6 +549,7 @@ paths:
     get:
       operationId: Debug_getDebugOutgoingConnections
       summary: Monitoring outgoing calls
+      description: Retrieves information about outgoing connections from the NIS node for debugging purposes.
       parameters: []
       responses:
         '200':
@@ -550,6 +564,7 @@ paths:
     post:
       operationId: Local_getDecodedAllTransfers
       summary: All transactions with decoded messages
+      description: Retrieves all transactions (incoming and outgoing) for a local account with decoded messages. This endpoint is typically used when NIS is running locally.
       parameters: []
       responses:
         '200':
@@ -576,6 +591,7 @@ paths:
     post:
       operationId: Local_getDecodedIncomingTransfers
       summary: Incoming transactions with decoded messages
+      description: Retrieves incoming transactions for a local account with decoded messages. This endpoint is typically used when NIS is running locally.
       parameters: []
       responses:
         '200':
@@ -602,6 +618,7 @@ paths:
     post:
       operationId: Local_getDecodedOutgoingTransfers
       summary: Outgoing transactions with decoded messages
+      description: Retrieves outgoing transactions for a local account with decoded messages. This endpoint is typically used when NIS is running locally.
       parameters: []
       responses:
         '200':
@@ -628,6 +645,7 @@ paths:
     post:
       operationId: Local_getBlocksAfterHeight
       summary: Getting part of a chain
+      description: Retrieves a portion of the blockchain starting from a specified height. This endpoint is typically used when NIS is running locally.
       parameters: []
       responses:
         '200':
@@ -654,6 +672,7 @@ paths:
     get:
       operationId: Debug_getDebugTimeSynchronization
       summary: Monitoring the network time
+      description: Retrieves information about the network time synchronization, including current time offset and changes.
       parameters: []
       responses:
         '200':
@@ -670,6 +689,7 @@ paths:
     get:
       operationId: Debug_getDebugTimers
       summary: Monitoring timers
+      description: Retrieves information about various internal timers within the NIS node for monitoring and debugging.
       parameters: []
       responses:
         '200':
@@ -685,8 +705,8 @@ paths:
   /heartbeat:
     get:
       operationId: Status_getHeartbeat
-      summary: ''
-      description: ''
+      summary: Heart beat request
+      description: Checks the status of the NIS API to ensure it is running and responsive.
       parameters: []
       responses:
         '200':
@@ -701,6 +721,7 @@ paths:
     get:
       operationId: Namespace_getNamespace
       summary: Retrieving a specific namespace
+      description: Retrieves details of a specific namespace by its name.
       parameters:
         - name: namespace
           in: query
@@ -720,6 +741,7 @@ paths:
     get:
       operationId: Namespace_getNamespaceMosaicDefinitions
       summary: Retrieving mosaic definitions
+      description: Retrieves mosaic definitions associated with a given namespace.
       parameters:
         - name: namespace
           in: query
@@ -741,6 +763,7 @@ paths:
     get:
       operationId: Namespace_getNamespaceRoots
       summary: Retrieving root namespaces
+      description: Retrieves a list of root namespaces, optionally paginated.
       parameters:
         - name: id
           in: query
@@ -767,6 +790,7 @@ paths:
     get:
       operationId: Node_getActivePeersMaxChainHeight
       summary: Maximum chain height in the active neighborhood
+      description: Retrieves the maximum blockchain height reported by active peer nodes.
       parameters: []
       responses:
         '200':
@@ -781,6 +805,7 @@ paths:
     get:
       operationId: Node_getNodeExperiences
       summary: Requesting node experiences
+      description: Retrieves information about the communication experiences with various nodes, including success and failure counts.
       parameters: []
       responses:
         '200':
@@ -797,6 +822,7 @@ paths:
     get:
       operationId: Node_getNodeExtendedInfo
       summary: Extended node information
+      description: Retrieves extended information about the NIS node, including application metadata and detailed node information.
       parameters: []
       responses:
         '200':
@@ -811,6 +837,7 @@ paths:
     get:
       operationId: Node_getNodeInfo
       summary: Basic node information
+      description: Retrieves basic information about the NIS node, including its metadata, endpoint, and identity.
       parameters: []
       responses:
         '200':
@@ -824,6 +851,7 @@ paths:
     get:
       operationId: Node_getActiveNodePeers
       summary: Active neighborhood
+      description: Retrieves a list of active peer nodes in the NEM network.
       parameters: []
       responses:
         '200':
@@ -838,6 +866,7 @@ paths:
     get:
       operationId: Node_getAllNodePeers
       summary: Complete neighborhood
+      description: Retrieves a list of all known peer nodes in the NEM network, categorized by their status (active, inactive, busy, failure).
       parameters: []
       responses:
         '200':
@@ -852,6 +881,7 @@ paths:
     get:
       operationId: Node_getReachableNodePeers
       summary: Reachable neighborhood
+      description: Retrieves a list of reachable peer nodes in the NEM network.
       parameters: []
       responses:
         '200':
@@ -866,7 +896,7 @@ paths:
     get:
       operationId: Status_getStatus
       summary: Status
-      description: ''
+      description: Retrieves the overall status of the NIS API, providing information about its health and operational state.
       parameters: []
       responses:
         '200':
@@ -881,6 +911,7 @@ paths:
     post:
       operationId: Transaction_announceTransaction
       summary: Sending the data to NIS
+      description: Announces a transaction to the NEM network via NIS. This broadcasts the prepared transaction for inclusion in a block.
       parameters: []
       responses:
         '200':
@@ -904,6 +935,7 @@ paths:
     post:
       operationId: Transaction_prepareTransactionAnnounce
       summary: Initiating a transaction
+      description: Prepares a transaction for announcement, typically involving the creation of a signed transaction. This is the first step before broadcasting a transaction to the network.
       parameters: []
       responses:
         '200':
