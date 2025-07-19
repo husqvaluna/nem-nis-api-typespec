@@ -12,9 +12,9 @@ tags:
   - name: chain
   - name: debug
   - name: block-chain
-  - name: nis-status
-  - name: node
   - name: namespace
+  - name: node
+  - name: nis-status
   - name: transaction
 paths:
   /account/generate:
