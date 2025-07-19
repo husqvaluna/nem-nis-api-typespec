@@ -11,6 +11,7 @@ tags:
   - name: block
   - name: chain
   - name: debug
+  - name: local
   - name: block-chain
   - name: namespace
   - name: node
@@ -561,114 +562,6 @@ paths:
                 $ref: '#/components/schemas/AuditCollection'
       tags:
         - debug
-  /debug/local/account/transfers/all:
-    post:
-      operationId: Local_getDecodedAllTransfers
-      summary: All transactions with decoded messages
-      description: Retrieves all transactions (incoming and outgoing) for a local account with decoded messages. This endpoint is typically used when NIS is running locally.
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TransactionMetaDataPair'
-      tags:
-        - debug
-        - account
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                page:
-                  type: object
-  /debug/local/account/transfers/incoming:
-    post:
-      operationId: Local_getDecodedIncomingTransfers
-      summary: Incoming transactions with decoded messages
-      description: Retrieves incoming transactions for a local account with decoded messages. This endpoint is typically used when NIS is running locally.
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TransactionMetaDataPair'
-      tags:
-        - debug
-        - account
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                page:
-                  type: object
-  /debug/local/account/transfers/outgoing:
-    post:
-      operationId: Local_getDecodedOutgoingTransfers
-      summary: Outgoing transactions with decoded messages
-      description: Retrieves outgoing transactions for a local account with decoded messages. This endpoint is typically used when NIS is running locally.
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TransactionMetaDataPair'
-      tags:
-        - debug
-        - account
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                page:
-                  type: object
-  /debug/local/chain/blocks-after:
-    post:
-      operationId: Local_getBlocksAfterHeight
-      summary: Getting part of a chain
-      description: Retrieves a portion of the blockchain starting from a specified height. This endpoint is typically used when NIS is running locally.
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ExplorerBlockViewModel'
-      tags:
-        - debug
-        - block-chain
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                blockHeight:
-                  type: object
   /debug/time-synchronization:
     get:
       operationId: Debug_getDebugTimeSynchronization
@@ -718,6 +611,114 @@ paths:
                 $ref: '#/components/schemas/NemRequestResult'
       tags:
         - nis-status
+  /local/account/transfers/all:
+    post:
+      operationId: Local_getDecodedAllTransfers
+      summary: All transactions with decoded messages
+      description: Retrieves all transactions (incoming and outgoing) for a local account with decoded messages. This endpoint is typically used when NIS is running locally.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionMetaDataPair'
+      tags:
+        - local
+        - account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: object
+  /local/account/transfers/incoming:
+    post:
+      operationId: Local_getDecodedIncomingTransfers
+      summary: Incoming transactions with decoded messages
+      description: Retrieves incoming transactions for a local account with decoded messages. This endpoint is typically used when NIS is running locally.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionMetaDataPair'
+      tags:
+        - local
+        - account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: object
+  /local/account/transfers/outgoing:
+    post:
+      operationId: Local_getDecodedOutgoingTransfers
+      summary: Outgoing transactions with decoded messages
+      description: Retrieves outgoing transactions for a local account with decoded messages. This endpoint is typically used when NIS is running locally.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionMetaDataPair'
+      tags:
+        - local
+        - account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                page:
+                  type: object
+  /local/chain/blocks-after:
+    post:
+      operationId: Local_getBlocksAfterHeight
+      summary: Getting part of a chain
+      description: Retrieves a portion of the blockchain starting from a specified height. This endpoint is typically used when NIS is running locally.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExplorerBlockViewModel'
+      tags:
+        - local
+        - block-chain
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                blockHeight:
+                  type: object
   /namespace/:
     get:
       operationId: Namespace_getNamespace
@@ -908,7 +909,7 @@ paths:
                 $ref: '#/components/schemas/NemRequestResult'
       tags:
         - nis-status
-  /transaction/transaction/announce:
+  /transaction/announce:
     post:
       operationId: Transaction_announceTransaction
       summary: Sending the data to NIS
@@ -932,7 +933,7 @@ paths:
               properties:
                 requestAnnounce:
                   type: object
-  /transaction/transaction/prepare-announce:
+  /transaction/prepare-announce:
     post:
       operationId: Transaction_prepareTransactionAnnounce
       summary: Initiating a transaction
