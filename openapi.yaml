@@ -143,7 +143,7 @@ paths:
     get:
       operationId: Account_getAccountHistoricalData
       summary: Retrieving historical account data
-      description: ''
+      description: Retrieves historical information for an account, including balance and importance data. This feature is optional and depends on the NIS configuration (HISTORICAL_ACCOUNT_DATA).
       parameters:
         - name: address
           in: query
@@ -507,6 +507,7 @@ paths:
     get:
       operationId: Chain_getChainLastBlock
       summary: Last block of the block chain score
+      description: Retrieves the current last block of the blockchain, providing details about the most recently added block.
       parameters: []
       responses:
         '200':
@@ -1959,7 +1960,7 @@ components:
       type: string
       maxLength: 64
       format: hex
-      description: Public key.
+      description: The public key as hexadecimal string (64 chars). Used to identify an account and verify signatures.
     TimeSynchronizationResult:
       type: object
       required:
