@@ -458,7 +458,8 @@ paths:
           description: The request has succeeded.
           content:
             application/json:
-              schema: {}
+              schema:
+                $ref: '#/components/schemas/BlockDTO'
       tags:
         - block
       requestBody:
@@ -486,7 +487,8 @@ paths:
           description: The request has succeeded.
           content:
             application/json:
-              schema: {}
+              schema:
+                $ref: '#/components/schemas/BlockDTO'
       tags:
         - block
   /chain/height:
@@ -515,7 +517,8 @@ paths:
           description: The request has succeeded.
           content:
             application/json:
-              schema: {}
+              schema:
+                $ref: '#/components/schemas/BlockDTO'
       tags:
         - chain
   /chain/score:
@@ -1025,10 +1028,8 @@ components:
         - isSet
       properties:
         isSet:
-          type: number
-          enum:
-            - 0
-            - 1
+          allOf:
+            - $ref: '#/components/schemas/ValueAvailability'
           description: Indicates if the score, ev, and height fields are available (0 or 1).
         score:
           type: number
@@ -1201,7 +1202,16 @@ components:
           format: int32
           description: The unique id of the request.
       description: Represents information about an audited request.
-    Block:
+    BlockChainScore:
+      type: object
+      required:
+        - score
+      properties:
+        score:
+          type: string
+          description: The score of the blockchain as a hexadecimal string.
+      description: Represents the score of the blockchain.
+    BlockDTO:
       type: object
       required:
         - timeStamp
@@ -1276,15 +1286,6 @@ components:
           format: int64
           description: The block reward in micro NEM.
       description: Represents a block in the NEM blockchain.
-    BlockChainScore:
-      type: object
-      required:
-        - score
-      properties:
-        score:
-          type: string
-          description: The score of the blockchain as a hexadecimal string.
-      description: Represents the score of the blockchain.
     BlockHeight:
       type: object
       required:
@@ -1311,7 +1312,7 @@ components:
           description: Array containing the transactions of the block.
         block:
           allOf:
-            - $ref: '#/components/schemas/Block'
+            - $ref: '#/components/schemas/BlockDTO'
           description: The block object.
         hash:
           type: string
@@ -1419,10 +1420,8 @@ components:
         - payload
       properties:
         type:
-          type: number
-          enum:
-            - 1
-            - 2
+          allOf:
+            - $ref: '#/components/schemas/MessageType'
           description: 'Message type (1: unencrypted, 2: encrypted).'
         payload:
           type: string
@@ -1430,6 +1429,12 @@ components:
           format: hex
           description: The message content (hexadecimal string). Max 1024 bytes (2048 hex chars).
       description: Represents the message payload within a transaction.
+    MessageType:
+      type: number
+      enum:
+        - 1
+        - 2
+      description: The type of a message payload.
     Mosaic:
       type: object
       required:
@@ -1521,10 +1526,8 @@ components:
         - fee
       properties:
         type:
-          type: number
-          enum:
-            - 1
-            - 2
+          allOf:
+            - $ref: '#/components/schemas/MosaicLevyType'
           description: 'The levy type (1: absolute fee, 2: percentile fee).'
         recipient:
           allOf:
@@ -1539,6 +1542,12 @@ components:
           format: int64
           description: The fee quantity. Interpretation depends on the levy type.
       description: Represents a mosaic levy (additional fee on transfer).
+    MosaicLevyType:
+      type: number
+      enum:
+        - 1
+        - 2
+      description: The type of a mosaic levy.
     MosaicProperty:
       type: object
       required:
@@ -1779,11 +1788,8 @@ components:
         - message
       properties:
         type:
-          type: number
-          enum:
-            - 1
-            - 2
-            - 4
+          allOf:
+            - $ref: '#/components/schemas/NemRequestResultType'
           description: 'The type of the result (1: validation, 2: heart beat, 4: status).'
         code:
           type: integer
@@ -1793,6 +1799,13 @@ components:
           type: string
           description: A human-readable message describing the result.
       description: Represents the result of a NEM request, typically used for validation or status.
+    NemRequestResultType:
+      type: number
+      enum:
+        - 1
+        - 2
+        - 4
+      description: The type of a NEM request result.
     NisNodeInfo:
       type: object
       required:
@@ -1845,10 +1858,8 @@ components:
         - host
       properties:
         protocol:
-          type: string
-          enum:
-            - http
-            - https
+          allOf:
+            - $ref: '#/components/schemas/NodeProtocol'
           description: The protocol used for communication (HTTP or HTTPS).
         port:
           type: integer
@@ -1934,6 +1945,12 @@ components:
           type: string
           description: The underlying platform (OS, java version).
       description: Represents meta data for a node.
+    NodeProtocol:
+      type: string
+      enum:
+        - http
+        - https
+      description: The protocol used for node communication.
     PrivateKey:
       type: string
       maxLength: 64
@@ -2187,6 +2204,12 @@ components:
             - {}
           description: Contains the transaction object. The specific type depends on the transaction type field within.
       description: Represents a pair of unconfirmed transaction and its meta data.
+    ValueAvailability:
+      type: number
+      enum:
+        - 0
+        - 1
+      description: Indicates if a value is available.
 servers:
   - url: http://ntn2.dusanjp.com:7890
     description: nis1testnet-2a
