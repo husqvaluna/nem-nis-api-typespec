@@ -43,7 +43,7 @@ paths:
           in: query
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/Address'
       responses:
         '200':
           description: The request has succeeded.
@@ -63,7 +63,7 @@ paths:
           in: query
           required: false
           schema:
-            type: string
+            $ref: '#/components/schemas/Address'
       responses:
         '200':
           description: The request has succeeded.
@@ -79,11 +79,11 @@ paths:
       summary: Requesting the original account data for a delegate account (public key variant)
       description: Retrieves the original account data for a delegate account using its public key.
       parameters:
-        - name: publicKey
+        - name: PublicKey
           in: query
           required: false
           schema:
-            type: string
+            $ref: '#/components/schemas/PublicKey'
       responses:
         '200':
           description: The request has succeeded.
@@ -103,7 +103,7 @@ paths:
           in: query
           required: false
           schema:
-            type: string
+            $ref: '#/components/schemas/PublicKey'
       responses:
         '200':
           description: The request has succeeded.
@@ -123,7 +123,7 @@ paths:
           in: query
           required: false
           schema:
-            type: string
+            $ref: '#/components/schemas/Address'
         - name: hash
           in: query
           required: false
@@ -150,7 +150,7 @@ paths:
           in: query
           required: false
           schema:
-            type: string
+            $ref: '#/components/schemas/Address'
         - name: startHeight
           in: query
           required: false
@@ -227,7 +227,7 @@ paths:
           in: query
           required: false
           schema:
-            type: string
+            $ref: '#/components/schemas/Address'
         - name: parent
           in: query
           required: false
@@ -253,7 +253,7 @@ paths:
           in: query
           required: false
           schema:
-            type: string
+            $ref: '#/components/schemas/Address'
       responses:
         '200':
           description: The request has succeeded.
@@ -274,7 +274,7 @@ paths:
           in: query
           required: false
           schema:
-            type: string
+            $ref: '#/components/schemas/Address'
         - name: parent
           in: query
           required: false
@@ -301,7 +301,7 @@ paths:
           in: query
           required: false
           schema:
-            type: string
+            $ref: '#/components/schemas/Address'
       responses:
         '200':
           description: The request has succeeded.
@@ -321,7 +321,7 @@ paths:
           in: query
           required: false
           schema:
-            type: string
+            $ref: '#/components/schemas/Address'
         - name: hash
           in: query
           required: false
@@ -348,7 +348,7 @@ paths:
           in: query
           required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/Address'
         - name: hash
           in: query
           required: false
@@ -375,7 +375,7 @@ paths:
           in: query
           required: false
           schema:
-            type: string
+            $ref: '#/components/schemas/Address'
         - name: hash
           in: query
           required: false
@@ -860,7 +860,8 @@ paths:
           description: The request has succeeded.
           content:
             application/json:
-              schema: {}
+              schema:
+                $ref: '#/components/schemas/NodeInfo'
       tags:
         - node
   /node/peer-list/active:
@@ -1353,7 +1354,7 @@ components:
       properties:
         node:
           allOf:
-            - $ref: '#/components/schemas/Node'
+            - $ref: '#/components/schemas/NodeInfo'
           description: The remote Node object.
         syncs:
           type: integer
@@ -1401,11 +1402,11 @@ components:
         privateKey:
           allOf:
             - $ref: '#/components/schemas/PrivateKey'
-          description: The private key of the account as hexadecimal string (64 chars).
+          description: The private key of the account as hexadecimal string.
         publicKey:
           allOf:
             - $ref: '#/components/schemas/PublicKey'
-          description: The public key of the account as hexadecimal string (64 chars).
+          description: The public key of the account as hexadecimal string.
         address:
           allOf:
             - $ref: '#/components/schemas/Address'
@@ -1800,33 +1801,13 @@ components:
       properties:
         node:
           allOf:
-            - $ref: '#/components/schemas/Node'
+            - $ref: '#/components/schemas/NodeInfo'
           description: Contains the node object.
         nisInfo:
           allOf:
             - $ref: '#/components/schemas/ApplicationMetaData'
           description: Contains the application meta data substructure.
       description: Provides detailed information about a NIS node.
-    Node:
-      type: object
-      required:
-        - metaData
-        - endpoint
-        - identity
-      properties:
-        metaData:
-          allOf:
-            - $ref: '#/components/schemas/NodeMetaData'
-          description: Meta data for the node.
-        endpoint:
-          allOf:
-            - $ref: '#/components/schemas/NodeEndpoint'
-          description: Endpoint information for the node.
-        identity:
-          allOf:
-            - $ref: '#/components/schemas/NodeIdentity'
-          description: Identity information for the node.
-      description: Represents a node in the NEM network.
     NodeCollection:
       type: object
       required:
@@ -1838,22 +1819,22 @@ components:
         inactive:
           type: array
           items:
-            $ref: '#/components/schemas/Node'
+            $ref: '#/components/schemas/NodeInfo'
           description: Array of inactive nodes.
         active:
           type: array
           items:
-            $ref: '#/components/schemas/Node'
+            $ref: '#/components/schemas/NodeInfo'
           description: Array of active nodes.
         busy:
           type: array
           items:
-            $ref: '#/components/schemas/Node'
+            $ref: '#/components/schemas/NodeInfo'
           description: Array of busy nodes.
         failure:
           type: array
           items:
-            $ref: '#/components/schemas/Node'
+            $ref: '#/components/schemas/NodeInfo'
           description: Array of failing nodes.
       description: Holds arrays of nodes with different statuses.
     NodeEndpoint:
@@ -1906,6 +1887,26 @@ components:
             - $ref: '#/components/schemas/PublicKey'
           description: The public key used to identify the node (hexadecimal string, 64 chars).
       description: Represents the identity information for a node.
+    NodeInfo:
+      type: object
+      required:
+        - metaData
+        - endpoint
+        - identity
+      properties:
+        metaData:
+          allOf:
+            - $ref: '#/components/schemas/NodeMetaData'
+          description: Meta data for the node.
+        endpoint:
+          allOf:
+            - $ref: '#/components/schemas/NodeEndpoint'
+          description: Endpoint information for the node.
+        identity:
+          allOf:
+            - $ref: '#/components/schemas/NodeIdentity'
+          description: Identity information for the node.
+      description: Represents a node in the NEM network.
     NodeMetaData:
       type: object
       required:
