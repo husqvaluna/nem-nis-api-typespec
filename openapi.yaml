@@ -1315,8 +1315,8 @@ components:
             - $ref: '#/components/schemas/BlockDTO'
           description: The block object.
         hash:
-          type: string
-          pattern: ^[a-f0-9]{64}$
+          allOf:
+            - $ref: '#/components/schemas/HexHash64'
           description: The hash of the block (hexadecimal string, 64 chars).
         difficulty:
           type: integer
@@ -1366,6 +1366,11 @@ components:
             - $ref: '#/components/schemas/NodeExperience'
           description: The communication experience with the remote node.
       description: Represents a pair of a node and its communication experience.
+    HexHash64:
+      type: string
+      pattern: ^[a-f0-9]{64}$
+      format: hex
+      description: A 64-character hexadecimal string.
     ImportanceTransferTransaction:
       type: object
       required:
