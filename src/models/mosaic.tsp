@@ -1,11 +1,24 @@
 /**
+ * The type of a mosaic levy.
+ */
+enum MosaicLevyType {
+  @doc("An absolute fee.")
+  Absolute: 1,
+
+  @doc("A percentile fee.")
+  Percentile: 2,
+}
+
+/**
  * Represents a mosaic identifier.
  */
 model MosaicId {
   @doc("The namespace id of the mosaic.")
-  namespaceId: string;
+  @example("alice.drinks")
+  namespaceId: Fqn;
 
   @doc("The name of the mosaic within the namespace.")
+  @example("orange juice")
   name: string;
 }
 
@@ -17,17 +30,8 @@ model Mosaic {
   mosaicId: MosaicId;
 
   @doc("The mosaic quantity in smallest units.")
+  @example(123)
   quantity: int64;
-}
-
-/**
- * The type of a mosaic levy.
- */
-enum MosaicLevyType {
-  /** An absolute fee. */
-  Absolute: 1,
-  /** A percentile fee. */
-  Percentile: 2,
 }
 
 /**
@@ -44,6 +48,7 @@ model MosaicLevy {
   mosaicId: MosaicId;
 
   @doc("The fee quantity. Interpretation depends on the levy type.")
+  @example(10)
   fee: int64;
 }
 
@@ -51,10 +56,12 @@ model MosaicLevy {
  * Represents a mosaic property.
  */
 model MosaicProperty {
-  @doc("The name of the property (e.g., \"divisibility\", \"initialSupply\", \"supplyMutable\", \"transferable\").")
+  @doc("The name of the property (e.g., `divisibility`, `initialSupply`, `supplyMutable`, `transferable`).")
+  @example("divisibility")
   name: string;
 
   @doc("The value of the property.")
+  @example("0")
   value: string;
 }
 
@@ -66,6 +73,7 @@ model MosaicDefinition {
   creator: PublicKey;
 
   @doc("The description of the mosaic.")
+  @example("silver coin")
   description: string;
 
   @doc("The identifier of the mosaic.")
@@ -83,6 +91,7 @@ model MosaicDefinition {
  */
 model MosaicDefinitionMetaData {
   @doc("The id for the mosaic definition object.")
+  @example(3541)
   id: int32;
 }
 

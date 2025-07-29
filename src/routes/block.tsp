@@ -1,5 +1,3 @@
-import "@typespec/http";
-
 import "../types/core.tsp";
 import "../models";
 
@@ -12,7 +10,7 @@ namespace Nem.Block {
   @route("/get")
   @summary("Getting a block with a given hash")
   @doc("Retrieves a block from the blockchain using its hash. This operation allows fetching specific block details.")
-  op getBlockByHash(@query(#{ explode: true }) blockHash?: string): Body<BlockDTO>;
+  op getBlockByHash(@query(#{ explode: true }) blockHash?: string): BlockDTO;
 
   @post
   @route("/at/public")
@@ -22,5 +20,5 @@ namespace Nem.Block {
     @body body: {
       blockHeight?: HttpPart<string>;
     },
-  ): Body<BlockDTO>;
+  ): BlockDTO;
 }

@@ -1,3 +1,5 @@
+import "@typespec/http";
+
 import "./account.tsp";
 import "./block.tsp";
 import "./chain.tsp";
@@ -6,4 +8,5 @@ import "./local.tsp";
 import "./namespace.tsp";
 import "./node.tsp";
 import "./status.tsp";
+import "./time-sync.tsp";
 import "./transaction.tsp";

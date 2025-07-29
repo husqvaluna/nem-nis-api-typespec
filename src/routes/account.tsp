@@ -1,5 +1,3 @@
-import "@typespec/http";
-
 import "../types/core.tsp";
 import "../models";
 
@@ -16,7 +14,7 @@ namespace Nem.Account {
     @body body: {
       privateKey?: HttpPart<string>;
     },
-  ): Body<NemRequestResult>;
+  ): NemRequestResult;
 
   @post
   @route("/unlock")
@@ -26,19 +24,19 @@ namespace Nem.Account {
     @body body: {
       privateKey?: HttpPart<string>;
     },
-  ): Body<NemRequestResult>;
+  ): NemRequestResult;
 
   @post
   @route("/unlocked/info")
   @summary("Retrieving the unlock info")
   @doc("Retrieves information about the unlock status of the account, indicating whether it is currently harvesting.")
-  op getAccountUnlockInfo(): Body<NemRequestResult>;
+  op getAccountUnlockInfo(): NemRequestResult;
 
   @get
   @route("/generate")
   @summary("Generating new account data")
   @doc("Generates a new NEM account, returning its private key, public key, and address.")
-  op generateAccount(): Body<KeyPairViewModel>;
+  op generateAccount(): KeyPairViewModel;
 
   @get
   @route("/get")
@@ -110,7 +108,7 @@ namespace Nem.Account {
   op getAccountHarvests(
     @query(#{ explode: true }) address?: Address,
     @query(#{ explode: true }) hash?: string,
-  ): Body<TransactionMetaDataPair[]>;
+  ): { data: HarvestInfo[] };
 
   @get
   @route("/importances")

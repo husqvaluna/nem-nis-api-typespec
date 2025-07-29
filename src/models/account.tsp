@@ -1,29 +1,13 @@
-/**
- * Account information structure.
- */
-model AccountInfo {
-  address: Address;
+@doc("The harvesting status of an account.")
+enum AccountStatus {
+  LOCKED,
+  UNLOCKED,
+}
 
-  @doc("The public key of the account (hexadecimal string, 64 characters). Null if the account has not published any transaction.")
-  publicKey?: PublicKey | null;
-
-  @doc("The account balance in micro NEM (integer).")
-  balance: int64;
-
-  @doc("The vested part of the balance in micro NEM (integer).")
-  vestedBalance: int64;
-
-  @doc("The importance score for the account (decimal number between 0 and 1).")
-  @minValue(0)
-  @maxValue(1)
-  importance: float64;
-
-  @doc("The number of blocks harvested by the account (integer, non-negative).")
-  @minValue(0)
-  harvestedBlocks: int32;
-
-  @doc("Account label (currently unused, always null in spec).")
-  label?: string | null;
+@doc("The remote harvesting status of an account.")
+enum RemoteAccountStatus {
+  ACTIVE,
+  INACTIVE,
 }
 
 /**
@@ -37,6 +21,39 @@ enum ValueAvailability {
 }
 
 /**
+ * Account information structure.
+ */
+model AccountInfo {
+  address: Address;
+
+  @doc("The public key of the account (hexadecimal string, 64 characters). Null if the account has not published any transaction.")
+  publicKey?: PublicKey | null;
+
+  @doc("The account balance in micro NEM (integer).")
+  @example(124446551689680)
+  balance: int64;
+
+  @doc("The vested part of the balance in micro NEM (integer).")
+  @example(104443451691625)
+  vestedBalance: int64;
+
+  @doc("The importance score for the account (decimal number between 0 and 1).")
+  @minValue(0)
+  @maxValue(1)
+  @example(0.010263666447108395)
+  importance: float64;
+
+  @doc("The number of blocks harvested by the account (integer, non-negative).")
+  @minValue(0)
+  @example(645)
+  harvestedBlocks: int32;
+
+  @doc("Account label (currently unused, always null in spec).")
+  @example(null)
+  label?: string | null;
+}
+
+/**
  * Represents the importance details of an account.
  */
 model AccountImportance {
@@ -46,16 +63,18 @@ model AccountImportance {
   @doc("The importance of the account (decimal number between 0 and 1). Available if isSet is 1.")
   @minValue(0)
   @maxValue(1)
+  @example(0.001222376902598832)
   score?: float64;
 
   @doc("The page rank portion of the importance (decimal number between 0 and 1). Available if isSet is 1.")
   @minValue(0)
   @maxValue(1)
+  @example(0.004252356221747241)
   ev?: float64;
 
   @doc("The height at which the importance calculation was performed. Available if isSet is 1.")
   @minValue(1)
-  height?: int64;
+  height?: Height;
 }
 
 /**
@@ -74,7 +93,7 @@ model AccountImportanceViewModel {
 model AccountHistoricalDataViewModel {
   @doc("The height for which the data is valid.")
   @minValue(1)
-  height: int64;
+  height: Height;
 
   @doc("The address of the account.")
   address: Address;
@@ -91,11 +110,13 @@ model AccountHistoricalDataViewModel {
   @doc("The importance of the account (decimal number between 0 and 1).")
   @minValue(0)
   @maxValue(1)
+  @example(0.00008857563463531297)
   importance: float64;
 
   @doc("The page rank part of the importance (decimal number between 0 and 1).")
   @minValue(0)
   @maxValue(1)
+  @example(0.0007605047835049349)
   pageRank: float64;
 }
 
@@ -103,11 +124,11 @@ model AccountHistoricalDataViewModel {
  * Represents the meta data of an account, including harvesting status and multisig information.
  */
 model AccountMetaData {
-  @doc("The harvesting status of the account.")
-  status: string;
+  @doc("The harvesting status of the account (LOCKED, UNLOCKED).")
+  status: AccountStatus;
 
-  @doc("The status of remote harvesting.")
-  remoteStatus: string;
+  @doc("The status of remote harvesting (ACTIVE, INACTIVE, etc.).")
+  remoteStatus: RemoteAccountStatus;
 
   @doc("Array of AccountInfo structures that describe the multisig accounts that this account is cosignatory of.")
   cosignatoryOf: AccountInfo[];
