@@ -1,30 +1,64 @@
+@doc("The type of a NEM request result.")
+enum NemRequestResultType {
+  @doc("Validation result.")
+  validation: 1,
+
+  @doc("Heartbeat result.")
+  heartbeat: 2,
+
+  @doc("Status result.")
+  status: 4,
+}
+
+@doc("The result code of a request.")
+enum NemRequestResultCode {
+  @doc("Unknown status.")
+  "unknown": 0,
+
+  @doc("NIS is stopped.")
+  stopped: 1,
+
+  @doc("NIS is starting.")
+  starting: 2,
+
+  @doc("NIS is running.")
+  running: 3,
+
+  @doc("NIS is booting the local node (implies NIS is running).")
+  booting: 4,
+
+  @doc("The local node is booted (implies NIS is running).")
+  booted: 5,
+
+  @doc("The local node is synchronized (implies NIS is running and the local node is booted).")
+  synchronized: 6,
+
+  @doc("NIS local node does not see any remote NIS node (implies running and booted).")
+  doesntSeeAnyRemote: 7,
+
+  @doc("NIS is currently loading the block chain from the database. In this state NIS cannot serve any requests.")
+  loading: 8,
+}
+
 /**
  * Represents an error object returned by NIS.
  */
 model ErrorObject {
   @doc("The number of seconds elapsed since the creation of the nemesis block.")
+  @example(9111526)
   timeStamp: int32;
 
   @doc("The general description of the error.")
+  @example("Bad Request")
   error: string;
 
   @doc("The detailed error message.")
+  @example("FAILURE_SERVER_LIMIT_EXCEEDED_EXCEPTION")
   message: string;
 
   @doc("The HTTP status code.")
+  @example(400)
   status: int32;
-}
-
-/**
- * The type of a NEM request result.
- */
-enum NemRequestResultType {
-  /** Validation result. */
-  Validation: 1,
-  /** Heartbeat result. */
-  Heartbeat: 2,
-  /** Status result. */
-  Status: 4,
 }
 
 /**
@@ -32,12 +66,15 @@ enum NemRequestResultType {
  */
 model NemRequestResult {
   @doc("The type of the result (1: validation, 2: heart beat, 4: status).")
+  @example(NemRequestResultType.heartbeat)
   type: NemRequestResultType;
 
   @doc("The code of the result. Interpretation depends on the type.")
-  code: int32;
+  @example(NemRequestResultCode.stopped)
+  code: NemRequestResultCode;
 
   @doc("A human-readable message describing the result.")
+  @example("ok")
   message: string;
 }
 
@@ -47,10 +84,10 @@ model NemRequestResult {
  */
 model NemAnnounceResult extends NemRequestResult {
   @doc("The hash object of the transaction.")
-  transactionHash: TransactionHash;
+  transactionHash: Hash;
 
   @doc("The hash object of the inner transaction or null if the transaction is not a multisig transaction.")
-  innerTransactionHash?: TransactionHash | null;
+  innerTransactionHash?: Hash | null;
 }
 
 /**
@@ -58,9 +95,11 @@ model NemAnnounceResult extends NemRequestResult {
  */
 model CommunicationTimeStamps {
   @doc("The network time at the moment the reply was sent (seconds elapsed since nemesis block).")
+  @example(328516712375)
   sendTimeStamp: int64;
 
   @doc("The network time at the moment the request was received (seconds elapsed since nemesis block).")
+  @example(328516712375)
   receiveTimeStamp: int64;
 }
 
@@ -69,18 +108,23 @@ model CommunicationTimeStamps {
  */
 model AuditInfo {
   @doc("The relative URL path of the request.")
+  @example("/account/get")
   path: string;
 
   @doc("The number of seconds elapsed since the creation of the nemesis block when the request was received.")
+  @example(9111526)
   startTime: int32;
 
   @doc("The host which initiated the request.")
+  @example("127.0.0.1")
   host: string;
 
   @doc("The time in seconds that has elapsed since the request was received.")
+  @example(10)
   elapsedTime: int32;
 
   @doc("The unique id of the request.")
+  @example(12345)
   id: int32;
 }
 
@@ -132,12 +176,15 @@ model NemAsyncTimerVisitor {
  */
 model TimeSynchronizationResult {
   @doc("The date and time when the synchronization was performed (string format).")
+  @example("2018-01-15T15:37:00.000Z")
   dateTime: string;
 
   @doc("The current offset to the local computer clock in milliseconds.")
+  @example(0)
   currentTimeOffset: int64;
 
   @doc("The change in milliseconds compared to the last synchronization.")
+  @example(0)
   change: int32;
 }
 
@@ -150,8 +197,9 @@ model AccountPrivateKeyTransactionsPage {
   value: PrivateKey;
 
   @doc("The optional hash value (hexadecimal string, 64 chars).")
-  hash?: HexHash64;
+  hash?: Hash;
 
   @doc("The optional transaction id.")
   id?: string;
 }
+

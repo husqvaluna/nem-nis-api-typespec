@@ -6,4 +6,5 @@ import "./local.tsp";
 import "./namespace.tsp";
 import "./node.tsp";
 import "./status.tsp";
+import "./time-sync.tsp";
 import "./transaction.tsp";

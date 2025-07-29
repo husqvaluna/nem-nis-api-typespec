@@ -1,9 +1,8 @@
-import "@typespec/http";
-
 import "../types/core.tsp";
 import "../models";
 
 using Http;
+using OpenAPI;
 
 @tag("transaction")
 @route("/transaction")
@@ -12,19 +11,21 @@ namespace Nem.Transaction {
   @route("/prepare-announce")
   @summary("Initiating a transaction")
   @doc("Prepares a transaction for announcement, typically involving the creation of a signed transaction. This is the first step before broadcasting a transaction to the network.")
+  @operationId("prepareTransactionAnnounce")
   op prepareTransactionAnnounce(
     @body body: {
       requestPrepareAnnounce?: HttpPart<string>;
     },
-  ): Body<NemAnnounceResult>;
+  ): NemAnnounceResult;
 
   @post
   @route("/announce")
   @summary("Sending the data to NIS")
   @doc("Announces a transaction to the NEM network via NIS. This broadcasts the prepared transaction for inclusion in a block.")
+  @operationId("announceTransaction")
   op announceTransaction(
     @body body: {
       requestAnnounce?: HttpPart<string>;
     },
-  ): Body<NemAnnounceResult>;
+  ): NemAnnounceResult;
 }

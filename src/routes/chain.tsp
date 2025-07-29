@@ -1,9 +1,8 @@
-import "@typespec/http";
-
 import "../types/core.tsp";
 import "../models";
 
 using Http;
+using OpenAPI;
 
 @tag("chain")
 @route("/chain")
@@ -12,16 +11,19 @@ namespace Nem.Chain {
   @route("/height")
   @summary("Block chain height")
   @doc("Retrieves the current height of the blockchain.")
+  @operationId("getChainInfo")
   op getChainInfo(): BlockHeight;
 
   @get
   @route("/score")
   @summary("Block chain score")
-  op getChainScore(): Body<BlockChainScore>;
+  @operationId("getChainScore")
+  op getChainScore(): BlockChainScore;
 
   @get
   @route("/last-block")
   @summary("Last block of the block chain score")
   @doc("Retrieves the current last block of the blockchain, providing details about the most recently added block.")
-  op getChainLastBlock(): Body<BlockDTO>;
+  @operationId("getChainLastBlock")
+  op getChainLastBlock(): BlockDTO;
 }
