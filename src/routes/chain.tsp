@@ -17,11 +17,11 @@ namespace Nem.Chain {
   @get
   @route("/score")
   @summary("Block chain score")
-  op getChainScore(): Body<BlockChainScore>;
+  op getChainScore(): BlockChainScore;
 
   @get
   @route("/last-block")
   @summary("Last block of the block chain score")
   @doc("Retrieves the current last block of the blockchain, providing details about the most recently added block.")
-  op getChainLastBlock(): Body<BlockDTO>;
+  op getChainLastBlock(): BlockDTO;
 }
