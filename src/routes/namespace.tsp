@@ -1,5 +1,3 @@
-import "@typespec/http";
-
 import "../types/core.tsp";
 import "../models";
 
@@ -18,7 +16,6 @@ namespace Nem.Namespace {
   ): Body<NamespaceMetaDataPair[]>;
 
   @get
-  @route("/")
   @summary("Retrieving a specific namespace")
   @doc("Retrieves details of a specific namespace by its name.")
   op getNamespace(@query(#{ explode: true }) `namespace`?: string): Body<NamespaceDTO>;
