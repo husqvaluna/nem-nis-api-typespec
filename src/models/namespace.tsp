@@ -3,14 +3,13 @@
  */
 model NamespaceDTO {
   @doc("The fully qualified name of the namespace (namespace id).")
-  fqn: string;
+  fqn: Fqn;
 
   @doc("The owner account address of the namespace.")
   owner: Address;
 
   @doc("The height at which the ownership begins.")
-  @minValue(1)
-  height: int64;
+  height: Height;
 }
 
 /**
@@ -38,7 +37,7 @@ model NamespaceMetaDataPair {
  */
 model ProvisionNamespaceTransaction extends TransactionBase {
   @doc("Transaction type must be 0x2001 (8193).")
-  type: 8193;
+  type: TransactionType.ProvisionNamespace;
 
   @doc("The public key of the account to which the rental fee is transferred (hexadecimal string, 64 chars).")
   rentalFeeSink: PublicKey;

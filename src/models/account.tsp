@@ -1,3 +1,25 @@
+@doc("The harvesting status of an account.")
+enum AccountStatus {
+  LOCKED,
+  UNLOCKED,
+}
+
+@doc("The remote harvesting status of an account.")
+enum RemoteAccountStatus {
+  ACTIVE,
+  INACTIVE,
+}
+
+/**
+ * Indicates if a value is available.
+ */
+enum ValueAvailability {
+  /** The value is not available. */
+  NotAvailable: 0,
+  /** The value is available. */
+  Available: 1,
+}
+
 /**
  * Account information structure.
  */
@@ -27,16 +49,6 @@ model AccountInfo {
 }
 
 /**
- * Indicates if a value is available.
- */
-enum ValueAvailability {
-  /** The value is not available. */
-  NotAvailable: 0,
-  /** The value is available. */
-  Available: 1,
-}
-
-/**
  * Represents the importance details of an account.
  */
 model AccountImportance {
@@ -55,7 +67,7 @@ model AccountImportance {
 
   @doc("The height at which the importance calculation was performed. Available if isSet is 1.")
   @minValue(1)
-  height?: int64;
+  height?: Height;
 }
 
 /**
@@ -74,7 +86,7 @@ model AccountImportanceViewModel {
 model AccountHistoricalDataViewModel {
   @doc("The height for which the data is valid.")
   @minValue(1)
-  height: int64;
+  height: Height;
 
   @doc("The address of the account.")
   address: Address;
@@ -103,11 +115,11 @@ model AccountHistoricalDataViewModel {
  * Represents the meta data of an account, including harvesting status and multisig information.
  */
 model AccountMetaData {
-  @doc("The harvesting status of the account.")
-  status: string;
+  @doc("The harvesting status of the account (LOCKED, UNLOCKED).")
+  status: AccountStatus;
 
-  @doc("The status of remote harvesting.")
-  remoteStatus: string;
+  @doc("The status of remote harvesting (ACTIVE, INACTIVE, etc.).")
+  remoteStatus: RemoteAccountStatus;
 
   @doc("Array of AccountInfo structures that describe the multisig accounts that this account is cosignatory of.")
   cosignatoryOf: AccountInfo[];

@@ -1,9 +1,20 @@
 /**
+ * The type of a mosaic levy.
+ */
+enum MosaicLevyType {
+  @doc("An absolute fee.")
+  Absolute: 1,
+
+  @doc("A percentile fee.")
+  Percentile: 2,
+}
+
+/**
  * Represents a mosaic identifier.
  */
 model MosaicId {
   @doc("The namespace id of the mosaic.")
-  namespaceId: string;
+  namespaceId: Fqn;
 
   @doc("The name of the mosaic within the namespace.")
   name: string;
@@ -18,16 +29,6 @@ model Mosaic {
 
   @doc("The mosaic quantity in smallest units.")
   quantity: int64;
-}
-
-/**
- * The type of a mosaic levy.
- */
-enum MosaicLevyType {
-  /** An absolute fee. */
-  Absolute: 1,
-  /** A percentile fee. */
-  Percentile: 2,
 }
 
 /**
@@ -51,7 +52,7 @@ model MosaicLevy {
  * Represents a mosaic property.
  */
 model MosaicProperty {
-  @doc("The name of the property (e.g., \"divisibility\", \"initialSupply\", \"supplyMutable\", \"transferable\").")
+  @doc("The name of the property (e.g., `divisibility`, `initialSupply`, `supplyMutable`, `transferable`).")
   name: string;
 
   @doc("The value of the property.")

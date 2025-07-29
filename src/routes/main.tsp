@@ -1,3 +1,5 @@
+import "@typespec/http";
+
 import "./account.tsp";
 import "./block.tsp";
 import "./chain.tsp";

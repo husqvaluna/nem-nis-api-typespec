@@ -1,3 +1,18 @@
+@doc("The network identifier.")
+enum NetworkId {
+  Testnet: 152,
+  Mainnet: 104,
+  Mijin: 96,
+}
+
+/**
+ * The protocol used for node communication.
+ */
+enum NodeProtocol {
+  HTTP: "http",
+  HTTPS: "https",
+}
+
 /**
  * Represents meta data for a node.
  */
@@ -6,7 +21,7 @@ model NodeMetaData {
   features: int32;
 
   @doc("The network id (104: mainnet, 96: mijin, 152: testnet).")
-  networkId: int32;
+  networkId: NetworkId;
 
   @doc("The name of the application that is running the node.")
   application: string;
@@ -16,14 +31,6 @@ model NodeMetaData {
 
   @doc("The underlying platform (OS, java version).")
   platform: string;
-}
-
-/**
- * The protocol used for node communication.
- */
-enum NodeProtocol {
-  HTTP: "http",
-  HTTPS: "https",
 }
 
 /**

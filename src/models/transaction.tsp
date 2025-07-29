@@ -1,10 +1,43 @@
 /**
- * Represents the hash of a transaction.
+ * The type of a message payload.
  */
-model TransactionHash {
-  @doc("The transaction hash data as a hexadecimal string.")
-  @format("hex")
-  data: string;
+enum MessageType {
+  @doc("An unencrypted message.")
+  Unencrypted: 1,
+
+  @doc("An encrypted message.")
+  Encrypted: 2,
+}
+
+@doc("The type of a transaction.")
+enum TransactionType {
+  Transfer: 0x101,
+  ImportanceTransfer: 0x801,
+  MultisigAggregateModification: 0x1001,
+  MultisigSignature: 0x1002,
+  Multisig: 0x1003,
+  ProvisionNamespace: 0x2001,
+  MosaicDefinition: 0x4001,
+  MosaicSupplyChange: 0x4002,
+}
+
+@doc("The network version of a transaction.")
+enum NetworkVersion {
+  Mainnet: 1744830465,
+  Testnet: -1744830463,
+  Mijin: 1610612737,
+}
+
+@doc("The mode of an importance transfer.")
+enum ImportanceTransferMode {
+  Activate: 1,
+  Deactivate: 2,
+}
+
+@doc("The type of a multisig cosignatory modification.")
+enum CosignatoryModificationType {
+  Add: 1,
+  Delete: 2,
 }
 
 /**
@@ -12,14 +45,13 @@ model TransactionHash {
  */
 model TransactionMetaData {
   @doc("The height of the block in which the transaction was included.")
-  @minValue(1)
-  height: int64;
+  height: Height;
 
   @doc("The database id of the transaction.")
   id: int32;
 
   @doc("The hash of the transaction.")
-  hash: TransactionHash;
+  hash: Hash;
 }
 
 /**
@@ -30,26 +62,22 @@ model TransactionBase {
   timeStamp: int32;
 
   @doc("Transaction signature (hexadecimal string, 128 chars). Missing if part of a multisig transaction.")
-  @pattern("^[a-f0-9]{128}$")
-  @format("hex")
-  signature?: string;
+  signature?: Signature;
 
   @doc("Transaction fee in micro NEM.")
   fee: int64;
 
   @doc("Transaction type code (integer).")
-  type: int32;
+  type: TransactionType;
 
   @doc("Deadline in seconds elapsed since the creation of the nemesis block.")
   deadline: int32;
 
   @doc("Transaction structure version. Network dependent (e.g., mainnet: 0x68000001, testnet: 0x98000001).")
-  version: int32;
+  version: NetworkVersion;
 
   @doc("Public key of the account that created the transaction (hexadecimal string, 64 chars).")
-  @pattern("^[a-f0-9]{64}$")
-  @format("hex")
-  signer: string;
+  signer: PublicKey;
 }
 
 /**
@@ -58,7 +86,7 @@ model TransactionBase {
  */
 model TransferTransactionV1 extends TransactionBase {
   @doc("Transaction type must be 0x101 (257).")
-  type: 257;
+  type: TransactionType.Transfer;
 
   @doc("Recipient account address.")
   recipient: Address;
@@ -76,7 +104,7 @@ model TransferTransactionV1 extends TransactionBase {
  */
 model TransferTransactionV2 extends TransactionBase {
   @doc("Transaction type must be 0x101 (257).")
-  type: 257;
+  type: TransactionType.Transfer;
 
   @doc("Recipient account address.")
   recipient: Address;
@@ -102,10 +130,10 @@ union TransferTransaction {
  */
 model ImportanceTransferTransaction extends TransactionBase {
   @doc("Transaction type must be 0x801 (2049).")
-  type: 2049;
+  type: TransactionType.ImportanceTransfer;
 
   @doc("The mode of the importance transfer (1: Activate, 2: Deactivate).")
-  mode: 1 | 2;
+  mode: ImportanceTransferMode;
 
   @doc("The public key of the remote account (hexadecimal string, 64 chars).")
   remoteAccount: PublicKey;
@@ -116,7 +144,7 @@ model ImportanceTransferTransaction extends TransactionBase {
  */
 model MultisigCosignatoryModification {
   @doc("The type of modification (1: Add, 2: Delete).")
-  modificationType: 1 | 2;
+  modificationType: CosignatoryModificationType;
 
   @doc("The public key of the cosignatory account (hexadecimal string, 64 chars).")
   cosignatoryAccount: PublicKey;
@@ -136,7 +164,7 @@ model MultisigMinimumCosignatoriesModification {
  */
 model MultisigAggregateModificationTransaction extends TransactionBase {
   @doc("Transaction type must be 0x1001 (4097).")
-  type: 4097;
+  type: TransactionType.MultisigAggregateModification;
 
   @doc("Array of multisig cosignatory modifications.")
   modifications: MultisigCosignatoryModification[];
@@ -151,10 +179,10 @@ model MultisigAggregateModificationTransaction extends TransactionBase {
  */
 model MultisigSignatureTransaction extends TransactionBase {
   @doc("Transaction type must be 0x1002 (4098).")
-  type: 4098;
+  type: TransactionType.MultisigSignature;
 
   @doc("The hash of the inner transaction of the corresponding multisig transaction.")
-  otherHash: TransactionHash;
+  otherHash: Hash;
 
   @doc("The address of the corresponding multisig account.")
   otherAccount: Address;
@@ -166,7 +194,7 @@ model MultisigSignatureTransaction extends TransactionBase {
  */
 model MultisigTransaction extends TransactionBase {
   @doc("Transaction type must be 0x1003 (4099).")
-  type: 4099;
+  type: TransactionType.Multisig;
 
   @doc("The inner transaction. Can be a TransferTransaction, ImportanceTransferTransaction, or MultisigAggregateModificationTransaction. The inner transaction does not have a valid signature.")
   otherTrans: TransferTransaction | ImportanceTransferTransaction | MultisigAggregateModificationTransaction | unknown;
@@ -194,7 +222,7 @@ model UnconfirmedTransactionMetaData {
   id: int32;
 
   @doc("The hash of the transaction.")
-  hash: TransactionHash;
+  hash: Hash;
 }
 
 /**
@@ -206,16 +234,6 @@ model UnconfirmedTransactionMetaDataPair {
 
   @doc("Contains the transaction object. The specific type depends on the transaction type field within.")
   transaction: TransferTransaction | ImportanceTransferTransaction | MultisigAggregateModificationTransaction | MultisigSignatureTransaction | MultisigTransaction | unknown;
-}
-
-/**
- * The type of a message payload.
- */
-enum MessageType {
-  /** An unencrypted message. */
-  Unencrypted: 1,
-  /** An encrypted message. */
-  Encrypted: 2,
 }
 
 /**

@@ -3,7 +3,7 @@
  */
 model BlockChainScore {
   @doc("The score of the blockchain as a hexadecimal string.")
-  score: string;
+  score: Hash;
 }
 
 /**
@@ -12,7 +12,8 @@ model BlockChainScore {
 model BlockHeight {
   @doc("The height of the block.")
   @minValue(1)
-  height: int64;
+  @example(1)
+  height: Height;
 }
 
 /**
@@ -33,7 +34,8 @@ model HarvestInfo {
 
   @doc("The height of the harvested block.")
   @minValue(1)
-  height: int64;
+  @example(1)
+  height: Height;
 }
 
 /**
@@ -44,11 +46,10 @@ model BlockDTO {
   timeStamp: int32;
 
   @doc("The signature of the block (hexadecimal string, 128 chars).")
-  @pattern("^[a-f0-9]{128}$")
-  signature: string;
+  signature: Signature;
 
   @doc("The hash of the previous block.")
-  prevBlockHash: TransactionHash;
+  prevBlockHash: Hash;
 
   @doc("The array of transactions included in the block.")
   transactions: (TransferTransaction | ImportanceTransferTransaction | MultisigAggregateModificationTransaction | MultisigSignatureTransaction | unknown)[];
@@ -57,11 +58,10 @@ model BlockDTO {
   version: int32;
 
   @doc("The hash of the block.")
-  hash: TransactionHash;
+  hash: Hash;
 
   @doc("The height of the block.")
-  @minValue(1)
-  height: int64;
+  height: Height;
 
   @doc("The block difficulty.")
   difficulty: int64;
@@ -76,8 +76,7 @@ model BlockDTO {
   payload?: string;
 
   @doc("The public key of the account that generated (harvested) the block (hexadecimal string, 64 chars).")
-  @pattern("^[a-f0-9]{64}$")
-  generatorPublicKey: string;
+  generatorPublicKey: PublicKey;
 
   @doc("The block reward in micro NEM.")
   blockReward: int64;
@@ -94,7 +93,7 @@ model ExplorerBlockViewModel {
   block: BlockDTO;
 
   @doc("The hash of the block (hexadecimal string, 64 chars).")
-  hash: HexHash64;
+  hash: Hash;
 
   @doc("The difficulty of the block.")
   difficulty: int64;
@@ -108,8 +107,8 @@ model ExplorerTransferViewModel {
   tx: TransferTransaction | ImportanceTransferTransaction | MultisigAggregateModificationTransaction | MultisigSignatureTransaction | unknown;
 
   @doc("The hash of the transaction.")
-  hash: TransactionHash;
+  hash: Hash;
 
   @doc("The hash of the inner transaction. Only available for multisig transactions.")
-  innerHash?: TransactionHash;
+  innerHash?: Hash;
 }

@@ -722,7 +722,7 @@ paths:
               properties:
                 blockHeight:
                   type: object
-  /namespace/:
+  /namespace:
     get:
       operationId: Namespace_getNamespace
       summary: Retrieving a specific namespace
@@ -989,8 +989,8 @@ components:
         - pageRank
       properties:
         height:
-          type: integer
-          format: int64
+          allOf:
+            - $ref: '#/components/schemas/Height'
           minimum: 1
           description: The height for which the data is valid.
         address:
@@ -1044,8 +1044,8 @@ components:
           maximum: 1
           description: The page rank portion of the importance (decimal number between 0 and 1). Available if isSet is 1.
         height:
-          type: integer
-          format: int64
+          allOf:
+            - $ref: '#/components/schemas/Height'
           minimum: 1
           description: The height at which the importance calculation was performed. Available if isSet is 1.
       description: Represents the importance details of an account.
@@ -1111,11 +1111,13 @@ components:
         - cosignatoryOf
       properties:
         status:
-          type: string
-          description: The harvesting status of the account.
+          allOf:
+            - $ref: '#/components/schemas/AccountStatus'
+          description: The harvesting status of the account (LOCKED, UNLOCKED).
         remoteStatus:
-          type: string
-          description: The status of remote harvesting.
+          allOf:
+            - $ref: '#/components/schemas/RemoteAccountStatus'
+          description: The status of remote harvesting (ACTIVE, INACTIVE, etc.).
         cosignatoryOf:
           type: array
           items:
@@ -1137,10 +1139,17 @@ components:
             - $ref: '#/components/schemas/AccountMetaData'
           description: Contains the account meta data object.
       description: Represents a pair of account information and its meta data.
+    AccountStatus:
+      type: string
+      enum:
+        - LOCKED
+        - UNLOCKED
+      description: The harvesting status of an account.
     Address:
       type: string
       pattern: ^[T|N][A-Z0-9]{39}$
       description: The account address. Base32 encoded, 40 characters. Starts with 'T' (testnet) or 'N' (mainnet).
+      example: TALICELCD3XPH4FFI5STGGNSNSWPOTG5E4DS2TOS
     ApplicationMetaData:
       type: object
       properties:
@@ -1208,7 +1217,8 @@ components:
         - score
       properties:
         score:
-          type: string
+          allOf:
+            - $ref: '#/components/schemas/Hash'
           description: The score of the blockchain as a hexadecimal string.
       description: Represents the score of the blockchain.
     BlockDTO:
@@ -1232,12 +1242,12 @@ components:
           format: int32
           description: Number of seconds elapsed since the creation of the nemesis block when the block was created.
         signature:
-          type: string
-          pattern: ^[a-f0-9]{128}$
+          allOf:
+            - $ref: '#/components/schemas/Signature'
           description: The signature of the block (hexadecimal string, 128 chars).
         prevBlockHash:
           allOf:
-            - $ref: '#/components/schemas/TransactionHash'
+            - $ref: '#/components/schemas/Hash'
           description: The hash of the previous block.
         transactions:
           type: array
@@ -1255,12 +1265,11 @@ components:
           description: The version of the block structure.
         hash:
           allOf:
-            - $ref: '#/components/schemas/TransactionHash'
+            - $ref: '#/components/schemas/Hash'
           description: The hash of the block.
         height:
-          type: integer
-          format: int64
-          minimum: 1
+          allOf:
+            - $ref: '#/components/schemas/Height'
           description: The height of the block.
         difficulty:
           type: integer
@@ -1278,8 +1287,8 @@ components:
           type: string
           description: The payload of the block (usually empty).
         generatorPublicKey:
-          type: string
-          pattern: ^[a-f0-9]{64}$
+          allOf:
+            - $ref: '#/components/schemas/PublicKey'
           description: The public key of the account that generated (harvested) the block (hexadecimal string, 64 chars).
         blockReward:
           type: integer
@@ -1292,11 +1301,18 @@ components:
         - height
       properties:
         height:
-          type: integer
-          format: int64
+          allOf:
+            - $ref: '#/components/schemas/Height'
           minimum: 1
           description: The height of the block.
+          example: 1
       description: Represents the height of a block in the blockchain.
+    CosignatoryModificationType:
+      type: number
+      enum:
+        - 1
+        - 2
+      description: The type of a multisig cosignatory modification.
     ExplorerBlockViewModel:
       type: object
       required:
@@ -1316,7 +1332,7 @@ components:
           description: The block object.
         hash:
           allOf:
-            - $ref: '#/components/schemas/HexHash64'
+            - $ref: '#/components/schemas/Hash'
           description: The hash of the block (hexadecimal string, 64 chars).
         difficulty:
           type: integer
@@ -1339,11 +1355,11 @@ components:
           description: The transaction object. The specific type depends on the transaction type field within.
         hash:
           allOf:
-            - $ref: '#/components/schemas/TransactionHash'
+            - $ref: '#/components/schemas/Hash'
           description: The hash of the transaction.
         innerHash:
           allOf:
-            - $ref: '#/components/schemas/TransactionHash'
+            - $ref: '#/components/schemas/Hash'
           description: The hash of the inner transaction. Only available for multisig transactions.
       description: Represents a transaction view model used by the blockchain explorer.
     ExtendedNodeExperiencePair:
@@ -1366,11 +1382,28 @@ components:
             - $ref: '#/components/schemas/NodeExperience'
           description: The communication experience with the remote node.
       description: Represents a pair of a node and its communication experience.
-    HexHash64:
+    Fqn:
+      type: string
+      description: Fully qualified name (e.g., nem.xem).
+      example: makoto.metal.coins
+    Hash:
       type: string
       pattern: ^[a-f0-9]{64}$
       format: hex
       description: A 64-character hexadecimal string.
+      example: 949583a20ebdfdcb58277eb42fef3e66e9e6bbfc47304d8741a82c68f7c53a22
+    Height:
+      type: integer
+      format: int64
+      minimum: 1
+      description: Height of the blockchain.
+      example: 42799
+    ImportanceTransferMode:
+      type: number
+      enum:
+        - 1
+        - 2
+      description: The mode of an importance transfer.
     ImportanceTransferTransaction:
       type: object
       required:
@@ -1384,10 +1417,8 @@ components:
             - 2049
           description: Transaction type must be 0x801 (2049).
         mode:
-          type: number
-          enum:
-            - 1
-            - 2
+          allOf:
+            - $ref: '#/components/schemas/ImportanceTransferMode'
           description: 'The mode of the importance transfer (1: Activate, 2: Deactivate).'
         remoteAccount:
           allOf:
@@ -1516,7 +1547,8 @@ components:
         - name
       properties:
         namespaceId:
-          type: string
+          allOf:
+            - $ref: '#/components/schemas/Fqn'
           description: The namespace id of the mosaic.
         name:
           type: string
@@ -1561,7 +1593,7 @@ components:
       properties:
         name:
           type: string
-          description: The name of the property (e.g., "divisibility", "initialSupply", "supplyMutable", "transferable").
+          description: The name of the property (e.g., `divisibility`, `initialSupply`, `supplyMutable`, `transferable`).
         value:
           type: string
           description: The value of the property.
@@ -1598,10 +1630,8 @@ components:
         - cosignatoryAccount
       properties:
         modificationType:
-          type: number
-          enum:
-            - 1
-            - 2
+          allOf:
+            - $ref: '#/components/schemas/CosignatoryModificationType'
           description: 'The type of modification (1: Add, 2: Delete).'
         cosignatoryAccount:
           allOf:
@@ -1632,7 +1662,7 @@ components:
           description: Transaction type must be 0x1002 (4098).
         otherHash:
           allOf:
-            - $ref: '#/components/schemas/TransactionHash'
+            - $ref: '#/components/schemas/Hash'
           description: The hash of the inner transaction of the corresponding multisig transaction.
         otherAccount:
           allOf:
@@ -1680,16 +1710,16 @@ components:
         - height
       properties:
         fqn:
-          type: string
+          allOf:
+            - $ref: '#/components/schemas/Fqn'
           description: The fully qualified name of the namespace (namespace id).
         owner:
           allOf:
             - $ref: '#/components/schemas/Address'
           description: The owner account address of the namespace.
         height:
-          type: integer
-          format: int64
-          minimum: 1
+          allOf:
+            - $ref: '#/components/schemas/Height'
           description: The height at which the ownership begins.
       description: Represents a NEM namespace.
     NamespaceMetaData:
@@ -1724,12 +1754,12 @@ components:
       properties:
         transactionHash:
           allOf:
-            - $ref: '#/components/schemas/TransactionHash'
+            - $ref: '#/components/schemas/Hash'
           description: The hash object of the transaction.
         innerTransactionHash:
-          type: object
+          type: string
           allOf:
-            - $ref: '#/components/schemas/TransactionHash'
+            - $ref: '#/components/schemas/Hash'
           nullable: true
           description: The hash object of the inner transaction or null if the transaction is not a multisig transaction.
       allOf:
@@ -1797,13 +1827,27 @@ components:
             - $ref: '#/components/schemas/NemRequestResultType'
           description: 'The type of the result (1: validation, 2: heart beat, 4: status).'
         code:
-          type: integer
-          format: int32
+          allOf:
+            - $ref: '#/components/schemas/NemRequestResultCode'
           description: The code of the result. Interpretation depends on the type.
         message:
           type: string
           description: A human-readable message describing the result.
+          example: status
       description: Represents the result of a NEM request, typically used for validation or status.
+    NemRequestResultCode:
+      type: number
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+      description: The result code of a request.
     NemRequestResultType:
       type: number
       enum:
@@ -1811,6 +1855,20 @@ components:
         - 2
         - 4
       description: The type of a NEM request result.
+    NetworkId:
+      type: number
+      enum:
+        - 152
+        - 104
+        - 96
+      description: The network identifier.
+    NetworkVersion:
+      type: number
+      enum:
+        - 1744830465
+        - -1744830463
+        - 1610612737
+      description: The network version of a transaction.
     NisNodeInfo:
       type: object
       required:
@@ -1937,8 +1995,8 @@ components:
           format: int32
           description: The number of features the node has.
         networkId:
-          type: integer
-          format: int32
+          allOf:
+            - $ref: '#/components/schemas/NetworkId'
           description: 'The network id (104: mainnet, 96: mijin, 152: testnet).'
         application:
           type: string
@@ -1961,6 +2019,7 @@ components:
       maxLength: 64
       format: hex
       description: The private key as hexadecimal string (64 chars).
+      example: 0962c6505d02123c40e858ff8ef21e2b7b5466be12c4770e3bf557aae828390f
     ProvisionNamespaceTransaction:
       type: object
       required:
@@ -1999,6 +2058,19 @@ components:
       maxLength: 64
       format: hex
       description: The public key as hexadecimal string (64 chars). Used to identify an account and verify signatures.
+      example: c2e19751291d01140e62ece9ee3923120766c6302e1099b04014fe1009bc89d3
+    RemoteAccountStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+      description: The remote harvesting status of an account.
+    Signature:
+      type: string
+      pattern: ^[a-f0-9]{128}$
+      format: hex
+      description: A 128-character hexadecimal string representing a signature.
+      example: 449cd76ea8bda2220b3d6ad6f8db5f81d4e68ad3d4b0c3db9a3c267355657639eabed3dbcef8e0cc22953ae2b36a22ee7dc6327484c9649cccd686a511eca105
     TimeSynchronizationResult:
       type: object
       required:
@@ -2033,42 +2105,30 @@ components:
           format: int32
           description: Number of seconds elapsed since the creation of the nemesis block.
         signature:
-          type: string
-          pattern: ^[a-f0-9]{128}$
-          format: hex
+          allOf:
+            - $ref: '#/components/schemas/Signature'
           description: Transaction signature (hexadecimal string, 128 chars). Missing if part of a multisig transaction.
         fee:
           type: integer
           format: int64
           description: Transaction fee in micro NEM.
         type:
-          type: integer
-          format: int32
+          allOf:
+            - $ref: '#/components/schemas/TransactionType'
           description: Transaction type code (integer).
         deadline:
           type: integer
           format: int32
           description: Deadline in seconds elapsed since the creation of the nemesis block.
         version:
-          type: integer
-          format: int32
+          allOf:
+            - $ref: '#/components/schemas/NetworkVersion'
           description: 'Transaction structure version. Network dependent (e.g., mainnet: 0x68000001, testnet: 0x98000001).'
         signer:
-          type: string
-          pattern: ^[a-f0-9]{64}$
-          format: hex
+          allOf:
+            - $ref: '#/components/schemas/PublicKey'
           description: Public key of the account that created the transaction (hexadecimal string, 64 chars).
       description: Base model for all transaction types.
-    TransactionHash:
-      type: object
-      required:
-        - data
-      properties:
-        data:
-          type: string
-          format: hex
-          description: The transaction hash data as a hexadecimal string.
-      description: Represents the hash of a transaction.
     TransactionMetaData:
       type: object
       required:
@@ -2077,9 +2137,8 @@ components:
         - hash
       properties:
         height:
-          type: integer
-          format: int64
-          minimum: 1
+          allOf:
+            - $ref: '#/components/schemas/Height'
           description: The height of the block in which the transaction was included.
         id:
           type: integer
@@ -2087,7 +2146,7 @@ components:
           description: The database id of the transaction.
         hash:
           allOf:
-            - $ref: '#/components/schemas/TransactionHash'
+            - $ref: '#/components/schemas/Hash'
           description: The hash of the transaction.
       description: Transaction meta data structure.
     TransactionMetaDataPair:
@@ -2110,6 +2169,18 @@ components:
             - {}
           description: The actual transaction object. The specific type depends on the transaction type field within.
       description: Structure containing transaction data and its meta data.
+    TransactionType:
+      type: number
+      enum:
+        - 257
+        - 2049
+        - 4097
+        - 4098
+        - 4099
+        - 8193
+        - 16385
+        - 16386
+      description: The type of a transaction.
     TransferTransaction:
       anyOf:
         - $ref: '#/components/schemas/TransferTransactionV1'
@@ -2186,7 +2257,7 @@ components:
           description: The database id of the transaction.
         hash:
           allOf:
-            - $ref: '#/components/schemas/TransactionHash'
+            - $ref: '#/components/schemas/Hash'
           description: The hash of the transaction.
       description: Represents meta data for an unconfirmed transaction.
     UnconfirmedTransactionMetaDataPair:
