@@ -3,7 +3,8 @@
  */
 model BlockChainScore {
   @doc("The score of the blockchain as a hexadecimal string.")
-  score: string;
+  @example("18722d5a7d590deb")
+  score: Hash;
 }
 
 /**
@@ -12,7 +13,8 @@ model BlockChainScore {
 model BlockHeight {
   @doc("The height of the block.")
   @minValue(1)
-  height: int64;
+  @example(1)
+  height: Height;
 }
 
 /**
@@ -20,20 +22,25 @@ model BlockHeight {
  */
 model HarvestInfo {
   @doc("The number of seconds elapsed since the creation of the nemesis block.")
+  @example(8879051)
   timeStamp: int32;
 
   @doc("The database id for the harvested block.")
+  @example(1262068)
   id: int32;
 
   @doc("The block difficulty.")
+  @example(26453656336676)
   difficulty: int64;
 
   @doc("The total fee collected by harvesting the block in micro NEM.")
+  @example(102585065)
   totalFee: int64;
 
   @doc("The height of the harvested block.")
   @minValue(1)
-  height: int64;
+  @example(1)
+  height: Height;
 }
 
 /**
@@ -41,14 +48,14 @@ model HarvestInfo {
  */
 model BlockDTO {
   @doc("Number of seconds elapsed since the creation of the nemesis block when the block was created.")
+  @example(9232968)
   timeStamp: int32;
 
   @doc("The signature of the block (hexadecimal string, 128 chars).")
-  @pattern("^[a-f0-9]{128}$")
-  signature: string;
+  signature: Signature;
 
   @doc("The hash of the previous block.")
-  prevBlockHash: TransactionHash;
+  prevBlockHash: Hash;
 
   @doc("The array of transactions included in the block.")
   transactions: (TransferTransaction | ImportanceTransferTransaction | MultisigAggregateModificationTransaction | MultisigSignatureTransaction | unknown)[];
@@ -57,16 +64,17 @@ model BlockDTO {
   version: int32;
 
   @doc("The hash of the block.")
-  hash: TransactionHash;
+  hash: Hash;
 
   @doc("The height of the block.")
-  @minValue(1)
-  height: int64;
+  height: Height;
 
   @doc("The block difficulty.")
+  @example(23456789012345)
   difficulty: int64;
 
   @doc("The total fee collected by harvesting the block in micro NEM.")
+  @example(150000)
   totalFee: int64;
 
   @doc("The type of the block (usually 1 for a normal block).")
@@ -76,8 +84,7 @@ model BlockDTO {
   payload?: string;
 
   @doc("The public key of the account that generated (harvested) the block (hexadecimal string, 64 chars).")
-  @pattern("^[a-f0-9]{64}$")
-  generatorPublicKey: string;
+  generatorPublicKey: PublicKey;
 
   @doc("The block reward in micro NEM.")
   blockReward: int64;
@@ -94,9 +101,10 @@ model ExplorerBlockViewModel {
   block: BlockDTO;
 
   @doc("The hash of the block (hexadecimal string, 64 chars).")
-  hash: HexHash64;
+  hash: Hash;
 
   @doc("The difficulty of the block.")
+  @example(23456789012345)
   difficulty: int64;
 }
 
@@ -108,8 +116,8 @@ model ExplorerTransferViewModel {
   tx: TransferTransaction | ImportanceTransferTransaction | MultisigAggregateModificationTransaction | MultisigSignatureTransaction | unknown;
 
   @doc("The hash of the transaction.")
-  hash: TransactionHash;
+  hash: Hash;
 
   @doc("The hash of the inner transaction. Only available for multisig transactions.")
-  innerHash?: TransactionHash;
+  innerHash?: Hash;
 }

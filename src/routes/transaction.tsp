@@ -1,5 +1,3 @@
-import "@typespec/http";
-
 import "../types/core.tsp";
 import "../models";
 
@@ -16,7 +14,7 @@ namespace Nem.Transaction {
     @body body: {
       requestPrepareAnnounce?: HttpPart<string>;
     },
-  ): Body<NemAnnounceResult>;
+  ): NemAnnounceResult;
 
   @post
   @route("/announce")
@@ -26,5 +24,5 @@ namespace Nem.Transaction {
     @body body: {
       requestAnnounce?: HttpPart<string>;
     },
-  ): Body<NemAnnounceResult>;
+  ): NemAnnounceResult;
 }

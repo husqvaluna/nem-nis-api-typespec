@@ -1,21 +1,8 @@
-/**
- * Represents meta data for a node.
- */
-model NodeMetaData {
-  @doc("The number of features the node has.")
-  features: int32;
-
-  @doc("The network id (104: mainnet, 96: mijin, 152: testnet).")
-  networkId: int32;
-
-  @doc("The name of the application that is running the node.")
-  application: string;
-
-  @doc("The version of the application.")
-  version: string;
-
-  @doc("The underlying platform (OS, java version).")
-  platform: string;
+@doc("The network identifier.")
+enum NetworkId {
+  Testnet: 152,
+  Mainnet: 104,
+  Mijin: 96,
 }
 
 /**
@@ -27,6 +14,30 @@ enum NodeProtocol {
 }
 
 /**
+ * Represents meta data for a node.
+ */
+model NodeMetaData {
+  @doc("The number of features the node has.")
+  @example(1)
+  features: int32;
+
+  @doc("The network id (104: mainnet, 96: mijin, 152: testnet).")
+  networkId: NetworkId;
+
+  @doc("The name of the application that is running the node.")
+  @example("NIS")
+  application: string;
+
+  @doc("The version of the application.")
+  @example("0.6.100")
+  version: string;
+
+  @doc("The underlying platform (OS, java version).")
+  @example("Oracle Corporation (1.8.0_25) on Windows 8")
+  platform: string;
+}
+
+/**
  * Represents the endpoint information for a node.
  */
 model NodeEndpoint {
@@ -34,9 +45,11 @@ model NodeEndpoint {
   protocol: NodeProtocol;
 
   @doc("The port used for communication.")
+  @example(7890)
   port: int32;
 
   @doc("The IP address or hostname of the endpoint.")
+  @example("127.0.0.1")
   host: string;
 }
 
@@ -45,6 +58,7 @@ model NodeEndpoint {
  */
 model NodeIdentity {
   @doc("The name of the node.")
+  @example("Alice")
   name: string;
 
   @doc("The public key used to identify the node (hexadecimal string, 64 chars).")
@@ -70,9 +84,11 @@ model NodeInfo {
  */
 model NodeExperience {
   @doc("The number of successful communications with the remote node.")
+  @example(1)
   s: int32;
 
   @doc("The number of failed communications with the remote node.")
+  @example(0)
   f: int32;
 }
 
@@ -84,6 +100,7 @@ model ExtendedNodeExperiencePair {
   node: NodeInfo;
 
   @doc("The number of synchronization attempts the node had with the remote node.")
+  @example(3)
   syncs: int32;
 
   @doc("The communication experience with the remote node.")
@@ -122,17 +139,25 @@ model NisNodeInfo {
  * Represents application meta data (e.g., NIS version).
  */
 model ApplicationMetaData {
-  @doc("The version of the NIS application.")
-  version?: string;
+  @doc("The current network time, i.e. the number of seconds that have elapsed since the creation of the nemesis block.")
+  @example(9189086)
+  currentTime: int32;
 
-  @doc("The build of the NIS application.")
-  build?: string;
+  @doc("The name of the application running on the node.")
+  @example("NEM Infrastructure Server")
+  application: string;
 
-  @doc("The start time of the NIS application.")
-  startTime?: string;
+  @doc("The network time when the application was started.")
+  @example(9060202)
+  startTime: int32;
 
-  @doc("The current time of the NIS application.")
-  currentTime?: string;
+  @doc("The application version.")
+  @example("0.6.102")
+  version: string;
+
+  @doc("The signer of the certificate used by the application.")
+  @example("CN=NEM Community,OU=Development Team,O=NEM,L=Internet,ST=web,C=WD")
+  signer: string;
 }
 
 /**
@@ -140,6 +165,7 @@ model ApplicationMetaData {
  */
 model BootNodeMetaData {
   @doc("The application name (e.g., \"NIS\").")
+  @example("NIS")
   application: string;
 }
 
@@ -151,9 +177,11 @@ model BootNodeEndpoint {
   protocol: string;
 
   @doc("The port number.")
+  @example(7890)
   port: int32;
 
   @doc("The host address or name.")
+  @example("127.0.0.1")
   host: string;
 }
 
@@ -165,6 +193,7 @@ model BootNodeIdentity {
   "private-key": PrivateKey;
 
   @doc("The name of the node.")
+  @example("Alice")
   name: string;
 }
 
